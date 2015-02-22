@@ -26,5 +26,5 @@ var Person = caplet.Model.extend({
 
 ### TODO
 
-- ReactJS integration
-- AngularJS integration
+- ReactJS adapter
+- AngularJS adapter
