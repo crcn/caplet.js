@@ -1,1 +1,6 @@
-# models.js
+# caplet.js
+
+Models library for JavaScript
+
+```javascript
+```
