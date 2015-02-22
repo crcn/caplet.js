@@ -23,3 +23,8 @@ var Person = caplet.Model.extend({
     
 });
 ```
+
+### TODO
+
+- ReactJS integration
+- AngularJS integration
