@@ -4,7 +4,7 @@
   "description": "Models library for JavaScript",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "make lint test-coveralls"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,14 @@
   },
   "homepage": "https://github.com/mojo-js/caplet.js",
   "devDependencies": {
+    "coveralls": "^2.11.2",
     "istanbul": "^0.3.6",
+    "jscs": "^1.11.3",
+    "jshint": "^2.6.0",
     "mocha": "^2.1.0",
+    "protoclass": "0.0.6"
+  },
+  "dependencies": {
     "protoclass": "0.0.6"
   }
 }

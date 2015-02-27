@@ -1,3 +1,7 @@
+# caplet.js
+
+[![Build Status](https://travis-ci.org/mojo-js/caplet.js.svg)](https://travis-ci.org/mojo-js/caplet.js) [![Dependency Status](https://david-dm.org/mojo-js/caplet.js.svg)](https://david-dm.org/mojo-js/caplet.js)
+
 ```javascript
 
 var caplet = require("caplet");
