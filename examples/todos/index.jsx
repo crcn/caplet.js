@@ -21,9 +21,7 @@ var TodoCollection = Caplet.createCollectionClass({
  */
 
 var TodoComponent = React.createClass({
-    componentDidMount: function() {
-        this.props.todo.watch(this.forceUpdate.bind(this));
-    },
+    mixins: [Caplet.watchModelsMixin],
     render: function() {
         return <li>{this.props.todo.text} <a href="#" onClick={this.props.todo.remove.bind(this.props.todo)}>x</a></li>
     }
@@ -33,9 +31,7 @@ var TodoComponent = React.createClass({
  */
 
 var TodosComponents = React.createClass({
-    componentDidMount: function() {
-        this.props.todos.watch(this.forceUpdate.bind(this));
-    },
+    mixins: [Caplet.watchModelsMixin],
     handleKeyDown: function(event) {
         if (event.keyCode !== 13) return;
         this.props.todos.create({ text: this.refs.todoText.getDOMNode().value });
