@@ -1,10 +1,10 @@
 {
   "name": "caplet",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Models library for JavaScript",
   "main": "index.js",
   "scripts": {
-    "test": "make lint test-coveralls"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -39,6 +39,7 @@
     "yargs": "^3.5.4"
   },
   "dependencies": {
-    "fast-event-emitter": "0.0.2"
+    "fast-event-emitter": "0.0.2",
+    "watchable-object": "0.0.3"
   }
 }
