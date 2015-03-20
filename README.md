@@ -50,7 +50,7 @@ var PersonComponent = React.creatClass({
 });
 
 
-React.render(<PersonComponent model={PersonModel({_id:"personId"})} />, document.body);
+React.render(<PersonComponent model={PersonModel({uid:"personId"})} />, document.body);
 
 ```
 

@@ -8,6 +8,11 @@ describe(__filename + "#", function() {
         expect(new ChildModel() instanceof Model).to.be(true);
     });
 
+    it("can create without new statement", function() {
+        var ChildModel = Model.createClass({});
+        expect(ChildModel() instanceof Model).to.be(true);
+    });
+
     it("can properly deserialize data", function() {
 
         var ChildModel = Model.createClass({
@@ -66,5 +71,28 @@ describe(__filename + "#", function() {
         expect(model.toData().lastName).to.be("b");
     });
 
+    it("can 'get' a property", function() {
+        var model = new Model({ a: 1 });
+        expect(model.get("a")).to.be(1);
+    });
 
+    it("emits a 'missingProperty' event when a property is missing", function(next) {
+        var model = new Model();
+        model._emitter.on("missingProperty", function(keypath) {
+            expect(keypath).to.be("a");
+            next();
+        });
+        model.get("a.b.c.d");
+    });
+
+
+    it("doesn't emit 'missingProperty' twice", function() {
+        var model = new Model(), i = 0;
+        model._emitter.on("missingProperty", function(keypath) {
+            i++;
+        });
+        model.get("a.b.c.d");
+        model.get("a.b.c.d");
+        expect(i).to.be(1);
+    });
 });
