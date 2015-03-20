@@ -4,6 +4,10 @@
 
 Caplet is a model library that works well with ReactJS. 
 
+Motivation:
+
+- asynchronous models - make API calls as they're needed
+
 ```javascript
 var React  = require("react");
 var Caplet = require("capolet");
