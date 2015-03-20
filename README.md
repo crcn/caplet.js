@@ -44,7 +44,7 @@ var PersonComponent = React.creatClass({
         (this.getValue("friends") || []).map(function(person) {
           return <li><Person model={person} /></li>;
         });
-      }</ul> : <div>{ this.props.model.getValue("name") }<a href="#" onClick={this.showFriends}>show friends</a></div>
+      }</ul> : <div>{ this.props.model.name }<a href="#" onClick={this.showFriends}>show friends</a></div>
     };
   }
 });

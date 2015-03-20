@@ -18,13 +18,12 @@
   "homepage": "https://github.com/mojo-js/caplet.js",
   "devDependencies": {
     "coveralls": "^2.11.2",
+    "expect.js": "^0.3.1",
     "istanbul": "^0.3.6",
     "jscs": "^1.11.3",
     "jshint": "^2.6.0",
     "mocha": "^2.1.0",
     "protoclass": "0.0.6"
   },
-  "dependencies": {
-    "protoclass": "0.0.6"
-  }
+  "dependencies": {}
 }
