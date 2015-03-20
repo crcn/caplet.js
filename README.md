@@ -27,7 +27,7 @@ var PeopleCollection = Caplet.createCollectionClass({
 
 var PersonComponent = React.creatClass({
   componentDidMount: function() {
-    this._listener = this.props.model.on("change", this._onChange);
+    this._listener = this.props.model.watch(this._onChange);
   },
   componentWillUnmount: function() {
     this._listener.dispose();
