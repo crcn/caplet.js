@@ -33,6 +33,17 @@ describe(__filename + "#", function() {
 
     });
 
+    it("does not attempt to set properties if the data is not an object", function() {
+        var model = new Model([1,2,3,4]);
+        expect(model[0]).to.be(void 0);
+    });
+
+    it("sets data property if the constructor arg is not an object", function() {
+        var data = [1,2,3,4];
+        var model = new Model(data);
+        expect(model.data).to.be(data);
+    });
+
     it("can properly be serialized with data", function() {
 
         var ChildModel = Model.createClass({
@@ -52,6 +63,16 @@ describe(__filename + "#", function() {
         expect(model.toData().firstName).to.be("a")
         expect(model.toData().lastName).to.be("b");
     });
+
+    it("does not deserialize data if the type is not an object", function() {
+        var model = new Model({ data: [1,2,3,4] });
+        expect(model[0]).to.be(void 0);
+    });
+
+    it("doesn't cast data as object if data is not an object when toData is called", function() {
+        var model = new Model({data:1});
+        expect(model.toData()).to.be(1);
+    })
 
     it("can properly be serialized with data & without toData", function() {
 
@@ -94,5 +115,23 @@ describe(__filename + "#", function() {
         model.get("a.b.c.d");
         model.get("a.b.c.d");
         expect(i).to.be(1);
+    });
+
+    it("equals true if the data is identical", function() {
+        var data = 1;
+        var a = new Model(data);
+        var b = new Model(data);
+        expect(a.equals(b)).to.be(true);
+        a.data = b.data = {};
+        expect(a.equals(b)).to.be(true);
+        a.data = {};
+        b.data = {};
+        expect(a.equals(b)).to.be(false);
+    });
+
+    it("equals true if the uid is the same", function() {
+        var a = new Model({uid:1});
+        var b = new Model({uid:1});
+        expect(a.equals(b)).to.be(true);
     });
 });
