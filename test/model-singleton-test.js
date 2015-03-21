@@ -38,5 +38,33 @@ describe(__filename + "#", function() {
         }, 4);
     });
 
-    
+    it("can be disposed", function(next) {
+        var i = 0;
+        function load(onLoad) {
+            i++;
+            setTimeout(onLoad, 1, null, { a: 1 });
+        }
+        var model = new Model(); var ret; var ret2;
+
+        Caplet.singleton(model, "property", load, function(err, result) {
+            ret = result;
+        });
+
+        var singleton = Caplet.singleton(model, "property", load, function(err, result) {
+            ret2 = result;
+        });
+
+        setTimeout(function () {
+            singleton.dispose();
+
+            Caplet.singleton(model, "property", load);
+
+            setTimeout(function() {
+                expect(i).to.be(2);
+                next();
+            }, 2);
+        }, 4);
+    });
+
+
 });

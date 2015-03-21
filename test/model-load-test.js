@@ -15,6 +15,4 @@ describe(__filename + "#", function() {
         expect(model.data.a).to.be(1);
         expect(ret).to.be(model);
     });
-
-    it("")
 });
