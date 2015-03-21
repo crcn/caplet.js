@@ -18,6 +18,7 @@
   "homepage": "https://github.com/mojo-js/caplet.js",
   "devDependencies": {
     "browser-sync": "^2.3.1",
+    "browserify": "^9.0.3",
     "browserify-middleware": "^5.0.2",
     "coveralls": "^2.11.2",
     "expect.js": "^0.3.1",
@@ -28,6 +29,7 @@
     "gulp-mocha": "^2.0.0",
     "gulp-plumber": "^1.0.0",
     "gulp-react": "^3.0.1",
+    "gulp-uglify": "^1.1.0",
     "istanbul": "^0.3.6",
     "jscs": "^1.11.3",
     "jshint": "^2.6.0",
@@ -36,6 +38,9 @@
     "protoclass": "0.0.6",
     "react": "^0.13.1",
     "reactify": "^1.1.0",
+    "uglify": "^0.1.1",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
     "yargs": "^3.5.4"
   },
   "dependencies": {

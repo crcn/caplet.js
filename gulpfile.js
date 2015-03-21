@@ -4,7 +4,11 @@ var react       = require("gulp-react");
 var mocha       = require("gulp-mocha");
 var plumber     = require("gulp-plumber");
 var jshint      = require("gulp-jshint");
-var browserify  = require("browserify-middleware");
+var browserify  = require("browserify");
+var uglify      = require("gulp-uglify");
+var source      = require("vinyl-source-stream");
+var buffer      = require("vinyl-buffer");
+var browserifyMiddlewate  = require("browserify-middleware");
 var express  = require("express");
 
 var karma    = require("karma").server;
@@ -55,6 +59,18 @@ gulp.task("test-coverage", function (complete) {
         })).
         on("end", complete);
     });
+});
+
+gulp.task("bundle", function() {
+
+
+    return browserify("./lib/index.js")
+    .bundle()
+    .pipe(source('caplet.min.js')) 
+    .pipe(buffer()) 
+    .pipe(uglify()) 
+    .pipe(gulp.dest('./dist'));
+
 });
 
 /**
@@ -145,7 +161,7 @@ gulp.task("default", function () {
 gulp.task("example-server", function (complete) {
     var server = express();
     var port;
-    server.use("/js/bundle.js", browserify(__dirname + "/examples/" + (options.example || "default") + "/index.js", { grep:/\.jsx$/,transform: [require("reactify")]}));
+    server.use("/js/bundle.js", browserifyMiddlewate(__dirname + "/examples/" + (options.example || "default") + "/index.js", { grep:/\.jsx$/,transform: [require("reactify")]}));
     server.use(express.static(__dirname + "/examples"));
     server.listen(port = Number(options.port || 8080));
     console.log("running example server on port %d", port);
