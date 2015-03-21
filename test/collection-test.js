@@ -71,7 +71,6 @@ describe(__filename + "#", function() {
         expect(c.length).to.be(3);
     });
 
-
     it("triggers a watcher when a model changes", function() {
         var c = new Collection({data:[1,2,3]});
         
@@ -80,5 +79,17 @@ describe(__filename + "#", function() {
         c.at(0).set("data", 4);
         c.at(0).set("data", 4);
         expect(i).to.be(2);
+    });
+
+    it("doesn't watch a model that's been spliced from the collection", function() {
+        var c = new Collection({data:[1,2,3]});
+        var i = 0;
+        var w = c.watch(function(){i++});
+        var m = c.at(0);
+        expect(i).to.be(0);
+        c.splice(0, 1);
+        expect(i).to.be(1);
+        m.set("data", 4);
+        expect(i).to.be(1);
     });
 });
