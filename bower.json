@@ -1,0 +1,18 @@
+{
+  "name": "caplet",
+  "version": "0.0.13",
+  "homepage": "https://github.com/mojo-js/caplet.js",
+  "authors": [
+    "Craig Condon <craig.j.condon@gmail.com>"
+  ],
+  "description": "models library",
+  "main": "./lib/index.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
