@@ -10,7 +10,7 @@ Caplet doesn't really implement new concepts. In fact, it's been inspired by a f
 
 <!-- stuff on familiarity here -->
 
-Caplet doesn't make any assumptions about your code. It just gives organization to your model relationships in a sane way. It also gives you a relatively higher level of encapsulation for your data, while also encouraging you - but not forcefuly - to follow design patterns that scale quite well.
+Caplet doesn't make any assumptions about your code. It just gives organization to your model relationships in a sane way. It also gives you a relatively higher level of encapsulation for your data, while also encouraging you, but not forcefuly, to follow design patterns that scale quite well.
 
 Caplet has been an evolution of many libraries in the past, which have been used in a few pretty large applications (30k-ish loc). The first version came about sometime around 2013 as [mojo-models](https://github.com/mojo-js/mojo-models), and has since been further generalized for all intensive purposes.
  
