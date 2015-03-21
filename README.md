@@ -21,6 +21,32 @@ The newer, hip version of Caplet has been designed for React, and pairs wells wi
 - Scales. Concepts have been used in various apps consisting of ~30k LOC.
 - Simple. You just have models & collections. Nothing else to learn.
 - Familiar. Caplet isn't too inventive. If you're familiar with Symphony, Mongoose, or Ember, then Caplet shouldn't be tough to learn.
+- Obvious. It's easier to reconsile how your application should be structured if the only thing you have to deal with are `models` & `collections`. For instance, a `user` model might have a virtual `todos` collection which might contain `todo` models. Like so:
+
+```
+
+folder structure:
+models/
+  user.js
+  todos.js
+  todo.js
+  
+relationships:
+
+User
+ + Todos[]
+   - Todo
+   
+```
+
+- Encapsulated. Caplet was design to encourage you to focus how your models & collections relate to one other versus how they relate to other parts of your application - this includes views, and even the API. This allows you to:
+ - Re-use your models for other applications - web/desktop/server-side.
+ - Maintain your model structure even if the API changes.
+ - Write your front-end in parallel with your API.
+
+- Testable. 
+
+
 
 <!--
 Obvious
