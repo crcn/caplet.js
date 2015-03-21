@@ -44,7 +44,7 @@ User
  - Maintain your model structure even if the API changes.
  - Write your front-end in parallel with your API.
 
-- Testable. 
+- Testable.
 
 
 
