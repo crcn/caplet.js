@@ -18,6 +18,12 @@ The newer, hip version of Caplet has been designed for React, and pairs wells wi
 - Minimalistic
 - Small - 11KB minified
 
+#### Installation
+
+```
+npm install caplet
+```
+
 #### Examples
 
 - [React TODOMVC](https://github.com/crcn/react-caplet-todomvc)
