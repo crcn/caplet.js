@@ -9,53 +9,56 @@ Motivation:
 - asynchronous models - make API calls as they're needed
 
 ```javascript
+var Caplet = require("../../lib");
 var React  = require("react");
-var Caplet = require("capolet");
 
-var PersonModel = Caplet.createModelClass({
-  virtuals: {
-    "friends": function(onLoad) {
-      return $.get("/people/" + this._id + "/friends", onLoad);
+/**
+ */
+
+var TodoModel = Caplet.createModelClass({
+});
+
+/**
+ */
+
+var TodoCollection = Caplet.createCollectionClass({
+    modelClass: TodoModel
+});
+
+/**
+ */
+
+var TodoComponent = React.createClass({
+    mixins: [Caplet.watchModelsMixin],
+    render: function() {
+        return <li><a href="#" onClick={this.props.todo.dispose.bind(this.props.todo)}>x</a> {this.props.todo.text}</li>
     }
-  },
-  persist: {
-    load: function(onLoad) {
-      $.get("/people/" + this._id, onLoad);
-    }
-  }
 }); 
 
-var PeopleCollection = Caplet.createCollectionClass({
-  modelClass: PersonModel
-});
+/**
+ */
 
-var PersonComponent = React.creatClass({
-  componentDidMount: function() {
-    this._listener = this.props.model.watch(this._onChange);
-  },
-  componentWillUnmount: function() {
-    this._listener.dispose();
-  },
-  _onChange: function() {
-    this.setState(); //re-render
-  },
-  showFriends: function() {
-    this.setState({ showFriends: true })
-  },
-  render: function() {
-    return { 
-      this.state.showFirends ? <ul>{
-        (this.getValue("friends") || []).map(function(person) {
-          return <li><Person model={person} /></li>;
-        });
-      }</ul> : <div>{ this.props.model.name }<a href="#" onClick={this.showFriends}>show friends</a></div>
-    };
-  }
-});
+var TodosComponents = React.createClass({
+    mixins: [Caplet.watchModelsMixin],
+    handleKeyDown: function(event) {
+        if (event.keyCode !== 13) return;
+        this.props.todos.create({ text: this.refs.todoText.getDOMNode().value });
+    },
+    render: function() {
+        return <div>
+            <input type="text" ref="todoText" onKeyDown={this.handleKeyDown} />
+            <ul>{ this.props.todos.map(function(todo) {
+                return <TodoComponent todo={todo} />;
+            })}</ul>
+        </div>
+    }
+}); 
 
 
-React.render(<PersonComponent model={PersonModel({uid:"personId"})} />, document.body);
 
+React.render(<TodosComponents todos={ TodoCollection({
+    data: [{ text: "drive car" }, { text: "wash car" }]
+})} />, document.body);
 ```
 
 ### TODO
