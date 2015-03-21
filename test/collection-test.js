@@ -70,4 +70,15 @@ describe(__filename + "#", function() {
         m.dispose();
         expect(c.length).to.be(3);
     });
+
+
+    it("triggers a watcher when a model changes", function() {
+        var c = new Collection({data:[1,2,3]});
+        
+        var i = 0;
+        var w = c.watch(function(){i++});
+        c.at(0).set("data", 4);
+        c.at(0).set("data", 4);
+        expect(i).to.be(2);
+    });
 });
