@@ -27,7 +27,7 @@ var TodoComponent = React.createClass({
 /**
  */
 
-var TodosComponents = React.createClass({
+var TodosComponent = React.createClass({
     mixins: [Caplet.watchModelsMixin],
     handleKeyDown: function(event) {
         if (event.keyCode !== 13) return;
@@ -43,8 +43,9 @@ var TodosComponents = React.createClass({
     }
 }); 
 
+/**
+ */
 
-
-React.render(<TodosComponents todos={ TodoCollection({
+React.render(<TodosComponent todos={ TodoCollection({
     data: [{ text: "drive car" }, { text: "wash car" }]
 })} />, document.body);
