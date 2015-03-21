@@ -15,9 +15,7 @@ var PeopleComponent = React.createClass({
     /**
      */
 
-    componentDidMount: function() {
-        this.props.person.watch(this.forceUpdate.bind(this));
-    },
+    mixins: [Caplet.watchModelsMixin],
 
     /**
      */
