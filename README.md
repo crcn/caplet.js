@@ -363,17 +363,4 @@ var Person = Caplet.createModelClass({
 })
 ```
 
-#### Caplet.load(target, load, onLoad)
-
-```javascript
-var Person = Caplet.createModelClass({
-    load: function(onLoad) {
-        Caplet.load(this, function(onLoad) {
-            $.get("/people/" + this.uid, onLoad);
-        }, onLoad);
-    }
-})
-```
-
-
 
