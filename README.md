@@ -16,6 +16,16 @@ Caplet has been an evolution of many libraries in the past, which have been used
  
 The newer, hip version of Caplet has been designed for React, and pairs wells with the Hierarchial nature of React-based applications. Caplet is a Flux replacement.
 
+#### Why?
+
+- Scales. Concepts have been used in various apps consisting of ~30k LOC.
+- Simple. You just have models & collections. Nothing else to learn.
+- Familiar. Caplet isn't too inventive. If you're familiar with Symphony, Mongoose, or Ember, then Caplet shouldn't be tough to learn.
+
+<!--
+Obvious
+-->
+
 #### Features
 
 - Asynchronous models - call API on demand (see virtuals)
