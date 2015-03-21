@@ -2,10 +2,12 @@ var Caplet = require("../../lib");
 var React  = require("react");
 
 var Person = Caplet.createModelClass({
-    virtuals: {
-        friends: function(onLoad) {
-            onLoad(null, [{ name: "jake" }, { name: "jeff" }].map(Person));
-        }
+    initialize: function() {
+        Caplet.setVirtuals(this, {
+            friends: function(onLoad) {
+                onLoad(null, [{ name: "jake" }, { name: "jeff" }].map(Person));
+            }
+        })
     }
 });
 

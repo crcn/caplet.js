@@ -41,6 +41,7 @@
   "dependencies": {
     "fast-event-emitter": "0.0.2",
     "watchable-collection": "^0.0.x",
-    "watchable-object": "^0.0.x"
+    "watchable-object": "^0.0.x",
+    "xtend": "^4.0.0"
   }
 }
