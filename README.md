@@ -383,4 +383,9 @@ var Person = Caplet.createModelClass({
 })
 ```
 
+#### Caplet.watchModelsMixin
+
+React mixin which automatically watches properties on a component & triggers a re-render
+if anything changes
+
 
