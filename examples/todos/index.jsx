@@ -5,9 +5,6 @@ var React  = require("react");
  */
 
 var TodoModel = Caplet.createModelClass({
-    remove: function() {
-        this.collection.splice(this.collection.indexOf(this), 1);
-    }
 });
 
 /**
@@ -23,7 +20,7 @@ var TodoCollection = Caplet.createCollectionClass({
 var TodoComponent = React.createClass({
     mixins: [Caplet.watchModelsMixin],
     render: function() {
-        return <li>{this.props.todo.text} <a href="#" onClick={this.props.todo.remove.bind(this.props.todo)}>x</a></li>
+        return <li><a href="#" onClick={this.props.todo.dispose.bind(this.props.todo)}>x</a> {this.props.todo.text}</li>
     }
 }); 
 

@@ -54,4 +54,20 @@ describe(__filename + "#", function() {
         expect(c.length).to.be(0);
         // TODO - check for save
     });
+
+    it("removes a model if it's been disposed of", function() {
+        var c = new Collection({data:[1,2,3,4]});
+        expect(c.length).to.be(4);
+        c.at(0).dispose();
+        expect(c.length).to.be(3);
+    });
+
+    it("watches a newly created model", function() {
+        var c = new Collection({data:[1,2,3]});
+        expect(c.length).to.be(3);
+        var m = c.create(4);
+        expect(c.length).to.be(4);
+        m.dispose();
+        expect(c.length).to.be(3);
+    });
 });
