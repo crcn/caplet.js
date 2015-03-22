@@ -99,5 +99,33 @@ describe(__filename + "#", function() {
         var c = new ChildCollection();
         c.create(1);
         expect(i).to.be(1);
-    })
+    });
+
+    it("calls getInitialProperties", function() {
+        var ChildCollection = Collection.createClass({
+            getInitialProperties: function() {
+                return { a: 1 };
+            }
+        });
+
+        var c = new ChildCollection();
+        expect(c.a).to.be(1);
+    });
+
+
+    it("only calls didChange after everything has been initialized", function() {
+        var i = 0;
+        var ChildCollection = Collection.createClass({
+            initialize: function() {
+                this.set("b", 2);
+            },
+            didChange: function() {
+                i++;
+            }
+        });
+
+        var c = new ChildCollection({ a: 1,  data: [] });
+        c.set("b", 2);
+        expect(i).to.be(1);
+    });
 });

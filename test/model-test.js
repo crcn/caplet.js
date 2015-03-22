@@ -134,4 +134,46 @@ describe(__filename + "#", function() {
         var b = new Model({uid:1});
         expect(a.equals(b)).to.be(true);
     });
+
+    it("can define properties from getInitialProperties", function() {
+        var ChildModel = Model.createClass({
+            getInitialProperties: function() {
+                return {
+                    a: "b"
+                }
+            }
+        });
+
+        var m = new ChildModel();
+        expect(m.a).to.be("b");
+    });
+
+    it("calls didChange on the model if the model has changed", function() {
+
+        var ChildModel = Model.createClass({
+            didChange: function() {
+                this.set("fullName", this.firstName + " " + this.lastName);
+            }
+        });
+
+        var m = new ChildModel();
+        m.setProperties({ firstName: "a", lastName: "b" });
+        expect(m.fullName).to.be("a b");
+    });
+
+    it("only calls didChange after everything has been initialized", function() {
+        var i = 0;
+        var ChildModel = Model.createClass({
+            initialize: function() {
+                this.set("b", 2);
+            },
+            didChange: function() {
+                i++;
+            }
+        });
+
+        var c = new ChildModel({ a: 1,  data: "1" });
+        c.set("b", 2);
+        expect(i).to.be(1);
+    });
 });
