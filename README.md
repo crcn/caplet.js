@@ -1,5 +1,7 @@
 ## Caplet.js
 
+Caplet is a tiny (11kb) modeling library for React (and other) applications.
+
 [![Build Status](https://travis-ci.org/mojo-js/caplet.js.svg)](https://travis-ci.org/mojo-js/caplet.js) [![Dependency Status](https://david-dm.org/mojo-js/caplet.js.svg)](https://david-dm.org/mojo-js/caplet.js) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mojo-js/caplet.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 Caplet is the M in "MVC". It works independently from any other library, and can easily be used with your existing framework/view layer such as [AngularJS](https://angularjs.org/), [ReactJS](http://facebook.github.io/react/), [RactiveJS](http://www.ractivejs.org/), or [PaperclipJS](http://paperclipjs.com) (shameless plug).
@@ -33,14 +35,6 @@ The newer, hip version of Caplet has been designed for React, and pairs wells wi
 no singletons
 -->
 
-
-#### Features
-
-- Asynchronous models - call API on demand (see virtuals)
-- Works on the front-end & backend
-- Works with any framework / library
-- Minimalistic
-- Small - 11KB minified
 
 #### Installation
 
