@@ -26,7 +26,6 @@ The newer, hip version of Caplet has been designed for React, and pairs wells wi
  - Re-use your models for other applications - web/desktop/server-side.
  - Maintain your model structure even if the API changes.
  - Write your front-end in parallel with your API.
- - Re-use 
 - Extensible. Caplet was designed to allow you to add additional functionality as needed. Stuff like offline-mode & realtime data should be a breeze.
 - Testable. 
 
