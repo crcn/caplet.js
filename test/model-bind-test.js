@@ -39,4 +39,15 @@ describe(__filename + "#", function() {
         am.set("a", 2);
         expect(bm.a).to.be(1);
     });
+
+
+
+    it("can do a different property on the same model", function() {
+        var am = new Caplet.Model({a:1});
+        var binding = Caplet.bindProperty(am, "a", "b").trigger();
+        expect(am.b).to.be(1);
+        binding.dispose();
+        am.set("a", 2);
+        expect(am.b).to.be(1);
+    });
 });
