@@ -16,7 +16,10 @@ Caplet doesn't make any assumptions about your code. It just gives organization 
 
 Caplet has been an evolution of many libraries in the past, which have been used in a few pretty large applications (30k-ish loc). The first version came about sometime around 2013 as [mojo-models](https://github.com/mojo-js/mojo-models), and has since been further generalized for all intensive purposes.
  
-The newer, hip version of Caplet has been designed for React, and pairs wells with the Hierarchial nature of React-based applications. It also works wells with, or without Flux (You could honestly just build an entire app with just React + Caplet). 
+The newer, hip version of Caplet has been designed for React, and pairs wells with the Hierarchial nature of React-based applications.
+
+Caplet can be a great companion to Flux. It also serves as a flux replacement.
+
 
 #### Why?
 
