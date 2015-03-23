@@ -311,15 +311,33 @@ var Todo = Caplet.createModelClass({
 
 var Todos = Caplet.createCollectionClass({
     modelClass: Todo,
+    getInitialProperties: function() {
+        return {
+            allComplete: this._isAllComplete();
+        }
+    },
     didChange: function() {
-        this.set("allComplete", this._isAllComplete());
+        this.setProperties(this.getInitialProperties());
     },
     _isAllComplete: function() {
         for (var i = this.length; i--;) if (!this.at(0).complete) return false;
         return true;
     }
 });
+
+var todos = Todos({
+    data: [ 
+        { text: "wash car" },
+        { text: "buy groceries", "complete": true }
+    ]
+});
+
+console.log(todos.allComplete); // false
+todos.at(0).set("complete", true);
+console.log(todos.allComplete); // true
 ```
+
+
 
 #### Collection.at(index)
 
