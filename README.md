@@ -320,7 +320,7 @@ var Todos = Caplet.createCollectionClass({
         this.setProperties(this.getInitialProperties());
     },
     _isAllComplete: function() {
-        for (var i = this.length; i--;) if (!this.at(0).complete) return false;
+        for (var i = this.length; i--;) if (!this.at(i).complete) return false;
         return true;
     }
 });
