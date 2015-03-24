@@ -345,18 +345,23 @@ WatchableObject.extend(Model, {
   }
 });
 
-Model.createClass = function(properties) {
+var oldExtend = Model.extend;
+
+Model.extend = Model.createClass = function(properties) {
+
+  var self = this;
 
   function ChildModel(properties) {
 
-    if (!(this instanceof Model)) {
+    if (!(this instanceof self)) {
       return new ChildModel(properties);
     }
 
-    Model.call(this, properties);
+    self.call(this, properties);
   }
 
-  Model.extend(ChildModel, properties);
+  oldExtend.call(self, ChildModel, properties);
+  ChildModel.extend = Model.extend;
   return ChildModel;
 };
 

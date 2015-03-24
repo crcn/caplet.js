@@ -13,6 +13,13 @@ describe(__filename + "#", function() {
     expect(ChildModel() instanceof Model).to.be(true);
   });
 
+  it("can can extend a sub class", function() {
+    var ChildModel = Model.createClass({});
+    var ChildModel2 = ChildModel.extend({});
+    expect(new ChildModel2() instanceof ChildModel).to.be(true);
+    expect(ChildModel2() instanceof Model).to.be(true);
+  });
+
   it("can properly deserialize data", function() {
 
     var ChildModel = Model.createClass({
