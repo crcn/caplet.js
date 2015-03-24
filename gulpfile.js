@@ -16,6 +16,7 @@ var browserifyMiddlewate  = require("browserify-middleware");
 var express               = require("express");
 var karma                 = require("karma").server;
 var options               = require("yargs").argv;
+var browserSync           = require("browser-sync");
 
 /**
  */
@@ -146,7 +147,7 @@ gulp.task("jshint", function() {
  * IMPORTANT: run this command AFTER watch - e.g: gulp test-coverage watch browser-sync
  */
 
-gulp.task("browser-sync", function() {
+gulp.task("browser-sync", function(complete) {
   browserSync({
     server: {
       baseDir: "./"
