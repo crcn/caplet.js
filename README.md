@@ -111,6 +111,9 @@ React.render(<TodosComponent todos={ TodoCollection({
 
 creates a new model class
 
+- `properties` - prototype properties to set on the new class
+    - `mixins` - array of mixins to add - adds to the prototype of class
+
 #### Model()
 
 creates a new model
@@ -237,6 +240,9 @@ disposes the model - also removes it from a collection if it's in one
 #### Collection Caplet.createCollectionClass(properties)
 
 creates a new collection class
+
+- `properties` - prototype properties to set on the new class
+    - `mixins` - array of mixins to add - adds to the prototype of class
 
 #### Collection()
 
