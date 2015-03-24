@@ -31,7 +31,8 @@ Caplet can be a great companion to Flux. It also serves as a Flux alternative if
  - Re-use your models for other applications - web/desktop/server-side.
  - Maintain your model structure even if the API changes.
  - Write your front-end in parallel with your API.
-- Extensible. Caplet was designed to allow you to add additional functionality as needed. Stuff like offline-mode & realtime data should be a breeze.
+- Lightweight. Caplet is small (11 KB gzipped)
+- Extensible. 
 - Testable. 
 
 <!--
