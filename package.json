@@ -11,7 +11,8 @@
     "data"
   ],
   "scripts": {
-    "test": "gulp lint test-coverage"
+    "test": "gulp lint test-coveralls",
+    "bundle": "gulp minify"
   },
   "browser": {
     "caplet": "./lib/index.js"

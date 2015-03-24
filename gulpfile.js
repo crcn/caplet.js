@@ -59,7 +59,8 @@ gulp.task("test-coverage", function (complete) {
 /**
  */
  
-gulp.task("test-coveralls", ["test-coverage"], function (complete) {
+gulp.task("test-coveralls", ["test-coverage"], function () {
+  console.log("COVDRALLE");
   return gulp.
   src("coverage/**/lcov.info").
   pipe(coveralls());

@@ -2,7 +2,7 @@
 
 Caplet is a tiny (11kb) modeling library.
 
-[![Build Status](https://travis-ci.org/mojo-js/caplet.js.svg)](https://travis-ci.org/mojo-js/caplet.js) [![Dependency Status](https://david-dm.org/mojo-js/caplet.js.svg)](https://david-dm.org/mojo-js/caplet.js) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mojo-js/caplet.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Build Status](https://travis-ci.org/mojo-js/caplet.js.svg)](https://travis-ci.org/mojo-js/caplet.js) [![Coverage Status](https://coveralls.io/repos/mojo-js/caplet.js/badge.svg?branch=master)](https://coveralls.io/r/mojo-js/caplet.js?branch=master) [![Dependency Status](https://david-dm.org/mojo-js/caplet.js.svg)](https://david-dm.org/mojo-js/caplet.js) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mojo-js/caplet.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 Caplet is the M in "MVC". It works independently from any other library, and can easily be used with your existing framework/view layer such as [AngularJS](https://angularjs.org/), [ReactJS](http://facebook.github.io/react/), [RactiveJS](http://www.ractivejs.org/), or [PaperclipJS](http://paperclipjs.com) (shameless plug).
 
