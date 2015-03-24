@@ -1,9 +1,13 @@
 var sift = require("sift");
 
+var uid = String(Date.now() + "_" + Math.round(Math.random() * 99999999));
+
 function DBCollection(modelCollectionClass) {
     this.modelCollectionClass = modelCollectionClass;
     this.modelClass           = modelCollectionClass.prototype.modelClass;
+
     this._items = [];
+    this._i     = 0;
 }
 
 DBCollection.prototype.find = function(query, onFind) {
@@ -20,8 +24,17 @@ DBCollection.prototype.findOne = function(query, onFind) {
     }.bind(this));
 }
 
-DBCollection.prototype.upsert = function(query, onFind) {
-    // TODO
+DBCollection.prototype.insert = function(data, onFind) {
+    data._id = uid + (this._i++);
+    this._items.push(data);
+    onFind(void 0, data);
+}
+
+DBCollection.prototype.update = function(query, data, onFind) {
+    var item = sift(query, this._items).shift();
+    if (!item) return onUpdate();
+    this._items.splice(this._items.indexOf(item), 1, data);
+    onFind(void 0, data);
 }
 
 module.exports = DBCollection;
