@@ -1,20 +1,20 @@
-var gulp        = require("gulp");
-var istanbul    = require("gulp-istanbul");
-var react       = require("gulp-react");
-var mocha       = require("gulp-mocha");
-var plumber     = require("gulp-plumber");
-var jshint      = require("gulp-jshint");
-var browserify  = require("browserify");
-var uglify      = require("gulp-uglify");
-var source      = require("vinyl-source-stream");
-var buffer      = require("vinyl-buffer");
-var jscs        = require("gulp-jscs");
-var jshint        = require("gulp-jshint");
+var gulp                  = require("gulp");
+var istanbul              = require("gulp-istanbul");
+var react                 = require("gulp-react");
+var mocha                 = require("gulp-mocha");
+var plumber               = require("gulp-plumber");
+var jshint                = require("gulp-jshint");
+var browserify            = require("browserify");
+var uglify                = require("gulp-uglify");
+var source                = require("vinyl-source-stream");
+var buffer                = require("vinyl-buffer");
+var jscs                  = require("gulp-jscs");
+var jshint                = require("gulp-jshint");
+var rename                = require("gulp-rename");
 var browserifyMiddlewate  = require("browserify-middleware");
-var express  = require("express");
-
-var karma    = require("karma").server;
-var options  = require("yargs").argv;
+var express               = require("express");
+var karma                 = require("karma").server;
+var options               = require("yargs").argv;
 
 /**
 
@@ -61,14 +61,23 @@ gulp.task("test-coverage", function (complete) {
 
 gulp.task("bundle", function() {
 
+    return browserify("./lib/index.js").
+    bundle().
+    pipe(source('caplet.js')).
+    pipe(buffer()).
+    pipe(gulp.dest('./dist'));
 
-    return browserify("./lib/index.js")
-    .bundle()
-    .pipe(source('caplet.min.js')) 
-    .pipe(buffer()) 
-    .pipe(uglify()) 
-    .pipe(gulp.dest('./dist'));
+});
 
+gulp.task("minify", ["bundle"], function() {
+
+    return gulp.
+    src("./dist/caplet.js").
+    pipe(uglify()).
+    pipe(rename(function(path) {
+        path.basename += ".min"; 
+    })).
+    pipe(gulp.dest('./dist'));
 });
 
 /**
@@ -86,7 +95,7 @@ gulp.task("test-browser", function(complete) {
  */
 
 gulp.task("lint", function() {
-    return gulp.run(["jsxhint", "jsxcs"]);
+    return gulp.run(["jshint", "jscs"]);
 });
 
 /**
@@ -115,7 +124,7 @@ gulp.task("jscs", function() {
 /**
  */
 
-gulp.task("lint", function() {
+gulp.task("jshint", function() {
     return gulp.
     src(paths.appFiles).
     pipe(jshint()).

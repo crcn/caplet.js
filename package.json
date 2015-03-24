@@ -1,6 +1,6 @@
 {
   "name": "caplet",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Models library for JavaScript",
   "main": "./lib/index.js",
   "keywords": [
@@ -11,7 +11,7 @@
     "data"
   ],
   "scripts": {
-    "test": "gulp lint jscs test-coverage"
+    "test": "gulp lint test-coverage"
   },
   "browser": {
     "caplet": "./lib/index.js"
@@ -40,6 +40,7 @@
     "gulp-mocha": "^2.0.0",
     "gulp-plumber": "^1.0.0",
     "gulp-react": "^3.0.1",
+    "gulp-rename": "^1.2.0",
     "gulp-uglify": "^1.1.0",
     "istanbul": "^0.3.6",
     "jsdom": "^4.0.4",
