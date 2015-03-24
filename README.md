@@ -52,7 +52,7 @@ npm install caplet
 #### Basic Example
 
 ```javascript
-var Caplet = require("../../lib");
+var Caplet = require("caplet");
 var React  = require("react");
 
 /**
