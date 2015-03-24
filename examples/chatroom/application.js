@@ -1,3 +1,8 @@
+var models = require("./models");
+
+models.Messages();
+
+
 var caplet   = require("caplet");
 var MainView = require("./views/main");
 var React    = require("react");

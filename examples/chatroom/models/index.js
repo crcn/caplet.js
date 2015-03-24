@@ -1,4 +1,6 @@
-module.exports = {
+var caplet = require("caplet");
+
+module.exports = caplet.models = {
     User     : require("./user"),
     Message  : require("./message"),
     Messages : require("./messages"),

@@ -1,4 +1,6 @@
 var caplet = require("caplet");
+var Thread = require("./thread");
+var User   = require("./user");
 
 module.exports = caplet.createModelClass({
 
