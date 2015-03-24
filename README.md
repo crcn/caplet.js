@@ -18,7 +18,7 @@ Caplet has been an evolution of many libraries in the past, which have been used
  
 The newer, hip version of Caplet has been designed for React, and pairs wells with the Hierarchial nature of React-based applications.
 
-Caplet can be a great companion to Flux. It also serves as a Flux replacement if you enjoy the good 'ol (and well proven when done right) MVC approach (Caplet (M) + React (VC)).
+Caplet can be a great companion to Flux. It also serves as a Flux alternative if you enjoy the good 'ol (and well proven when done right) MVC approach (Caplet (M) + React (VC)).
 
 
 #### Why?
