@@ -1,4 +1,4 @@
-var caplet = require("caplet");
+var caplet = require("../../../");
 var Thread = require("./thread");
 var User   = require("./user");
 

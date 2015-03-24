@@ -1,4 +1,4 @@
-var caplet = require("caplet");
+var caplet = require("../../../");
 var db     = require("../database");
 
 module.exports = caplet.createModelClass({

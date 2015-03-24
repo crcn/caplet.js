@@ -2,14 +2,21 @@ var Collection = require("../lib/collection");
 var expect     = require("expect.js");
 
 describe(__filename + "#", function() {
-  it("can create a new model class", function() {
+  it("can create a new collection class", function() {
     var ChildCollection = Collection.createClass({});
     expect(new ChildCollection() instanceof Collection).to.be(true);
   });
 
-  it("can create a new model class without the new keyword", function() {
+  it("can create a new collection class without the new keyword", function() {
     var ChildCollection = Collection.createClass({});
     expect(ChildCollection() instanceof Collection).to.be(true);
+  });
+
+  it("can can extend a sub class", function() {
+    var ChildCollection = Collection.createClass({});
+    var ChildCollection2 = ChildCollection.extend({});
+    expect(new ChildCollection2() instanceof ChildCollection).to.be(true);
+    expect(ChildCollection2() instanceof Collection).to.be(true);
   });
 
   it("can accept a source in the constructor arg", function() {

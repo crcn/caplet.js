@@ -22,7 +22,7 @@ var browserSync           = require("browser-sync");
  */
 
 var paths = {
-  testFiles : ["test/**/*-test.js"],
+  testFiles : ["test/**/*-test.js", "./examples/**/*-test.js"],
   appFiles  : ["lib/**/*.js"],
   allFiles  : ["test/**", "lib/**"],
   covFiles  : ["coverage/**/*"]

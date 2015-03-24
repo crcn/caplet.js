@@ -1,9 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (process,global){
-exports.Model                 = require("./model").createClass();
-exports.Collection            = require("./collection").createClass();
-exports.createModelClass      = require("./model").createClass;
-exports.createCollectionClass = require("./collection").createClass;
+var Model      = require("./model");
+var Collection = require("./collection");
+
+exports.Model                 = Model.createClass();
+exports.Collection            = Collection.createClass();
+exports.createModelClass      = Model.createClass;
+exports.createCollectionClass = Collection.createClass;
 exports.setVirtuals           = require("./set-virtuals");
 exports.load                  = require("./load");
 exports.singleton             = require("./singleton");
@@ -11,6 +14,7 @@ exports.save                  = require("./save");
 exports.watchProperty         = require("./watch-property");
 exports.bindProperty          = require("./bind-property");
 exports.watchModelsMixin      = require("./watch-models-mixin");
+exports.getAsync              = require("./get-async");
 
 /* istanbul ignore if */
 if (process.browser) {
@@ -18,7 +22,7 @@ if (process.browser) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./bind-property":2,"./collection":3,"./load":4,"./model":5,"./save":6,"./set-virtuals":7,"./singleton":8,"./watch-models-mixin":9,"./watch-property":10,"_process":11}],2:[function(require,module,exports){
+},{"./bind-property":2,"./collection":3,"./get-async":4,"./load":5,"./model":6,"./save":7,"./set-virtuals":8,"./singleton":9,"./watch-models-mixin":10,"./watch-property":11,"_process":12}],2:[function(require,module,exports){
 var watchProperty = require("./watch-property");
 
 module.exports = function(fromTarget, fromProperty, toTarget, toProperty) {
@@ -37,7 +41,7 @@ module.exports = function(fromTarget, fromProperty, toTarget, toProperty) {
   return watcher;
 };
 
-},{"./watch-property":10}],3:[function(require,module,exports){
+},{"./watch-property":11}],3:[function(require,module,exports){
 var WatchableCollection = require("watchable-collection");
 var FastEventEmitter    = require("fast-event-emitter");
 var watchProperty       = require("./watch-property");
@@ -203,24 +207,43 @@ WatchableCollection.extend(Collection, {
   }
 });
 
-Collection.createClass = function(properties) {
+var oldExtend = Collection.extend;
+Collection.extend = function(properties) {
+
+  var self = this;
 
   function ChildCollection(properties) {
 
-    if (!(this instanceof Collection)) {
+    if (!(this instanceof self)) {
       return new ChildCollection(properties);
     }
 
-    Collection.call(this, properties);
+    self.call(this, properties);
   }
 
-  Collection.extend(ChildCollection, properties);
+  oldExtend.call(self, ChildCollection, properties);
+  ChildCollection.extend = Collection.extend;
   return ChildCollection;
 };
 
+Collection.createClass = Collection.extend.bind(Collection);
+
 module.exports = Collection;
 
-},{"./model":5,"./watch-property":10,"fast-event-emitter":12,"watchable-collection":14,"xtend":17}],4:[function(require,module,exports){
+},{"./model":6,"./watch-property":11,"fast-event-emitter":13,"watchable-collection":15,"xtend":18}],4:[function(require,module,exports){
+var watchProperty = require("./watch-property");
+
+module.exports = function(target, keypath, onLoad) {
+
+  var watcher = watchProperty(target, keypath, function(value) {
+    watcher.dispose();
+    onLoad(void 0, value);
+  });
+
+  watcher.trigger();
+};
+
+},{"./watch-property":11}],5:[function(require,module,exports){
 var singleton = require("./singleton");
 
 module.exports = function(target, load, onLoad) {
@@ -231,7 +254,7 @@ module.exports = function(target, load, onLoad) {
   });
 };
 
-},{"./singleton":8}],5:[function(require,module,exports){
+},{"./singleton":9}],6:[function(require,module,exports){
 var WatchableObject  = require("watchable-object");
 var FastEventEmitter = require("fast-event-emitter");
 var watchProperty    = require("./watch-property");
@@ -347,7 +370,7 @@ WatchableObject.extend(Model, {
 
 var oldExtend = Model.extend;
 
-Model.extend = Model.createClass = function(properties) {
+Model.extend = function(properties) {
 
   var self = this;
 
@@ -365,9 +388,11 @@ Model.extend = Model.createClass = function(properties) {
   return ChildModel;
 };
 
+Model.createClass = Model.extend.bind(Model);
+
 module.exports = Model;
 
-},{"./watch-property":10,"fast-event-emitter":12,"watchable-object":16,"xtend":17}],6:[function(require,module,exports){
+},{"./watch-property":11,"fast-event-emitter":13,"watchable-object":17,"xtend":18}],7:[function(require,module,exports){
 module.exports = function(target, create, update) {
   if (target.uid) {
     return update.call(target);
@@ -376,7 +401,7 @@ module.exports = function(target, create, update) {
   }
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function (process){
 var extend = require("xtend/mutable");
 
@@ -406,7 +431,7 @@ module.exports = function(target, virtuals) {
 };
 
 }).call(this,require('_process'))
-},{"_process":11,"xtend/mutable":18}],8:[function(require,module,exports){
+},{"_process":12,"xtend/mutable":19}],9:[function(require,module,exports){
 module.exports = function(target, property, load, onLoad) {
   if (!target._singletons) target._singletons = {};
   var event = "singleton:" + property;
@@ -427,7 +452,7 @@ module.exports = function(target, property, load, onLoad) {
   return singleton;
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 
 function _hasChanged(from, to) {
   for (var key in from) {
@@ -506,7 +531,7 @@ module.exports = {
   }
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 module.exports = function(target, property, listener) {
 
@@ -534,7 +559,7 @@ module.exports = function(target, property, listener) {
   return watcher;
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -594,7 +619,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 var protoclass = require("protoclass");
 
@@ -759,7 +784,7 @@ EventEmitter.prototype.removeAllListeners = function (event) {
 
 module.exports = EventEmitter;
 
-},{"protoclass":13}],13:[function(require,module,exports){
+},{"protoclass":14}],14:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
@@ -835,7 +860,7 @@ protoclass.setup = function (child) {
 
 
 module.exports = protoclass;
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var WatchableObject = require("watchable-object");
 var watchProperty   = require("./watchProperty");
 
@@ -947,7 +972,7 @@ WatchableObject.extend(WatchableCollection, {
 });
 
 module.exports = WatchableCollection;
-},{"./watchProperty":15,"watchable-object":16}],15:[function(require,module,exports){
+},{"./watchProperty":16,"watchable-object":17}],16:[function(require,module,exports){
 
 
 module.exports = function(target, property, listener) {
@@ -972,7 +997,7 @@ module.exports = function(target, property, listener) {
 
     return watcher;
 }
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -1156,7 +1181,7 @@ protoclass(WatchableObject, {
 
 module.exports = WatchableObject;
 
-},{"protoclass":13}],17:[function(require,module,exports){
+},{"protoclass":14}],18:[function(require,module,exports){
 module.exports = extend
 
 function extend() {
@@ -1175,7 +1200,7 @@ function extend() {
     return target
 }
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = extend
 
 function extend(target) {
