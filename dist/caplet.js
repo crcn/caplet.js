@@ -46,7 +46,7 @@ var WatchableCollection = require("watchable-collection");
 var FastEventEmitter    = require("fast-event-emitter");
 var watchProperty       = require("./watch-property");
 var Model               = require("./model").createClass();
-var extend              = require("xtend");
+var extend              = require("xtend/mutable");
 
 function Collection(sourceOrProperties) {
 
@@ -221,6 +221,11 @@ Collection.extend = function(properties) {
     self.call(this, properties);
   }
 
+  if (properties && properties.mixins) {
+    var mixins = properties.mixins;
+    extend.apply(void 0, [properties].concat(mixins));
+  }
+
   oldExtend.call(self, ChildCollection, properties);
   ChildCollection.extend = Collection.extend;
   return ChildCollection;
@@ -230,7 +235,7 @@ Collection.createClass = Collection.extend.bind(Collection);
 
 module.exports = Collection;
 
-},{"./model":6,"./watch-property":11,"fast-event-emitter":13,"watchable-collection":15,"xtend":18}],4:[function(require,module,exports){
+},{"./model":6,"./watch-property":11,"fast-event-emitter":13,"watchable-collection":15,"xtend/mutable":18}],4:[function(require,module,exports){
 var watchProperty = require("./watch-property");
 
 module.exports = function(target, keypath, onLoad) {
@@ -258,7 +263,7 @@ module.exports = function(target, load, onLoad) {
 var WatchableObject  = require("watchable-object");
 var FastEventEmitter = require("fast-event-emitter");
 var watchProperty    = require("./watch-property");
-var extend           = require("xtend");
+var extend           = require("xtend/mutable");
 
 /**
  */
@@ -383,6 +388,11 @@ Model.extend = function(properties) {
     self.call(this, properties);
   }
 
+  if (properties && properties.mixins) {
+    var mixins = properties.mixins;
+    extend.apply(void 0, [properties].concat(mixins));
+  }
+
   oldExtend.call(self, ChildModel, properties);
   ChildModel.extend = Model.extend;
   return ChildModel;
@@ -392,7 +402,7 @@ Model.createClass = Model.extend.bind(Model);
 
 module.exports = Model;
 
-},{"./watch-property":11,"fast-event-emitter":13,"watchable-object":17,"xtend":18}],7:[function(require,module,exports){
+},{"./watch-property":11,"fast-event-emitter":13,"watchable-object":17,"xtend/mutable":18}],7:[function(require,module,exports){
 module.exports = function(target, create, update) {
   if (target.uid) {
     return update.call(target);
@@ -431,7 +441,7 @@ module.exports = function(target, virtuals) {
 };
 
 }).call(this,require('_process'))
-},{"_process":12,"xtend/mutable":19}],9:[function(require,module,exports){
+},{"_process":12,"xtend/mutable":18}],9:[function(require,module,exports){
 module.exports = function(target, property, load, onLoad) {
   if (!target._singletons) target._singletons = {};
   var event = "singleton:" + property;
@@ -1182,25 +1192,6 @@ protoclass(WatchableObject, {
 module.exports = WatchableObject;
 
 },{"protoclass":14}],18:[function(require,module,exports){
-module.exports = extend
-
-function extend() {
-    var target = {}
-
-    for (var i = 0; i < arguments.length; i++) {
-        var source = arguments[i]
-
-        for (var key in source) {
-            if (source.hasOwnProperty(key)) {
-                target[key] = source[key]
-            }
-        }
-    }
-
-    return target
-}
-
-},{}],19:[function(require,module,exports){
 module.exports = extend
 
 function extend(target) {
