@@ -1,4 +1,5 @@
 var Collection = require("../lib/collection");
+var watchProperty = require("../lib/watch-property");
 var expect     = require("expect.js");
 
 describe(__filename + "#", function() {
@@ -148,5 +149,32 @@ describe(__filename + "#", function() {
     var c = new ChildCollection({ a: 1,  data: [] });
     c.set("b", 2);
     expect(i).to.be(1);
+  });
+
+  it("properly triggers change on computed property", function() {
+
+    var ChildCollection = Collection.createClass({
+      initialize: function() {
+        this.onChange();
+      },
+      onChange: function() {
+        var sum = 0;
+        this.forEach(function(model) {
+          sum += model.data;
+        });
+        this.set("sum", sum);
+      }
+    });
+
+    var c = new ChildCollection({data:[1,2,3]});
+    expect(c.sum).to.be(6);
+    var sum = 0;
+
+    watchProperty(c, "sum", function(value) {
+      sum = value;
+    });
+
+    c.at(0).set("data", 10);
+    expect(sum).to.be(10);
   });
 });
