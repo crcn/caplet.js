@@ -9,14 +9,10 @@ module.exports = caplet.createModelClass({
 
     virtuals: {
         messages: function(onLoad) {
-            caplet.load(Messages({ thread: this }), function(onLoad) {
-                db.messages.find({ threadId: this.thread.uid }, onLoad);
-            }, onLoad);
+            db.messages.find({ threadId: this.thread.uid }, onLoad);
         },
         participants: function(onLoad) {
-            caplet.load(Users({ thread: this }), function(onLoad) {
-                db.users.find({ threadId: this.thread.uid }, onLoad);
-            }, onLoad);
+            db.users.find({ threadId: this.thread.uid }, onLoad);
         }
     },
 
