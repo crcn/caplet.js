@@ -42,9 +42,6 @@ var mochaOptions = {
 
 gulp.task("test-coverage", function (complete) {
 
-    // reset coverage on each task cycle - keep this
-    // here in case "watch" is called
-    global.__coverage__ = {};
 
     gulp.
     src(paths.appFiles).
@@ -56,7 +53,6 @@ gulp.task("test-coverage", function (complete) {
         pipe(plumber()).
         pipe(mocha(mochaOptions)).
         pipe(istanbul.writeReports({
-            coverageVariable: "__coverage__",
             reporters: ["text","text-summary", "lcov"]
         })).
         on("end", complete);
