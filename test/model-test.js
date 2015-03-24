@@ -182,4 +182,16 @@ describe(__filename + "#", function() {
     c.set("b", 2);
     expect(i).to.be(1);
   });
+
+  it("properly calls onDataChange", function() {
+    var i = 0;
+    var ChildModel = Model.createClass({
+      onDataChange: function(data) {
+        i++;
+      }
+    });
+    var c = new ChildModel({ a: 1,  data: {name:"a"} });
+    expect(i).to.be(1);
+    expect(c.name).to.be(void 0);
+  });
 });
