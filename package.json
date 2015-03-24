@@ -11,7 +11,7 @@
     "data"
   ],
   "scripts": {
-    "test": "gulp lint jscs test"
+    "test": "gulp lint jscs test-coverage"
   },
   "browser": {
     "caplet": "./lib/index.js"
