@@ -15,4 +15,14 @@ describe(__filename + "#", function() {
     expect(model.data.a).to.be(1);
     expect(ret).to.be(model);
   });
+
+  it("can handle an error", function() {
+    var model = new Model(); var error;
+    Caplet.load(model, function(onLoad) {
+      onLoad(new Error("fail"));
+    }, function(err, result) {
+      error = err;
+    });
+    expect(error.message).to.be("fail");
+  });
 });

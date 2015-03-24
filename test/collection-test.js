@@ -78,6 +78,24 @@ describe(__filename + "#", function() {
     expect(i).to.be(2);
   });
 
+  it("can call toData()", function() {
+    var c = new Collection({data:[1, 2, 3]});
+    var d = c.toData();
+    expect(d[0]).to.be(1);
+  });
+
+  it("can call toJSON()", function() {
+    var c = new Collection({data:[1, 2, 3]});
+    var d = c.toJSON();
+    expect(d[0]).to.be(1);
+  });
+
+  it("can set the source to undefined", function() {
+    var c = new Collection({data:[1, 2, 3]});
+    c.set("data", void 0);
+    expect(c.length).to.be(0);
+  });
+
   it("doesn't watch a model that's been spliced from the collection", function() {
     var c = new Collection({data:[1, 2, 3]});
     var i = 0;

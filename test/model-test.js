@@ -64,6 +64,11 @@ describe(__filename + "#", function() {
     expect(model.toData().lastName).to.be("b");
   });
 
+  it("can call toJSON()", function() {
+    var m = new Model({ data: 1});
+    expect(m.toJSON()).to.be(1);
+  });
+
   it("does not deserialize data if the type is not an object", function() {
     var model = new Model({ data: [1, 2, 3, 4] });
     expect(model[0]).to.be(void 0);

@@ -14,11 +14,11 @@ describe(__filename + "#", function() {
   });
 
   it("calls 'update' if the model has a uid", function() {
-    var model = new Model(); var ret;
+    var model = new Model({uid:1}); var ret;
     var i = 0;
-    Caplet.save(model, function() {
+    Caplet.save(model, function() { }, function() {
       i++;
-    }, function() { });
+    });
     expect(i).to.be(1);
   });
 });

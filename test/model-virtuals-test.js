@@ -60,4 +60,46 @@ describe(__filename + "#", function() {
     c.get("a");
     expect(i).to.be(1);
   });
+
+  it("can define setVirtuals multiple times", function() {
+    var m = new Model();
+
+    Caplet.setVirtuals(m, {
+      a: function(next) {
+        next(null, "b");
+      }
+    });
+
+    Caplet.setVirtuals(m, {
+      b: function(next) {
+        next(null, "c");
+      }
+    });
+
+    m.get("b");
+    m.get("d"); // trigger missing prop
+    expect(m.b).to.be("c");
+    m.get("a");
+    expect(m.a).to.be("b");
+  });
+
+  it("can handle an error", function() {
+    var ChildModel = Model.extend();
+
+    var c = new ChildModel();
+    Caplet.setVirtuals(c, {
+      a: function(next) {
+        next(new Error("abba"));
+      }
+    });
+
+    var error;
+
+    c._emitter.on("error", function(err) {
+      error = err;
+    });
+
+    c.get("a");
+    expect(error.message).to.be("abba");
+  });
 });

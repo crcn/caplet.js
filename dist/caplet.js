@@ -12,6 +12,7 @@ exports.watchProperty         = require("./watch-property");
 exports.bindProperty          = require("./bind-property");
 exports.watchModelsMixin      = require("./watch-models-mixin");
 
+/* istanbul ignore if */
 if (process.browser) {
   global.Caplet = module.exports;
 }
@@ -119,7 +120,9 @@ WatchableCollection.extend(Collection, {
    */
 
   toData: function() {
-    return this.source;
+    return this.source.map(function(model) {
+      return model.toData();
+    });
   },
 
   /**
@@ -370,34 +373,35 @@ module.exports = function(target, create, update) {
 
 },{}],7:[function(require,module,exports){
 (function (process){
-var extend = require("xtend");
+var extend = require("xtend/mutable");
 
 module.exports = function(target, virtuals) {
 
   if (target.virtuals) {
     return extend(target.virtuals, virtuals);
+  } else {
+    target.virtuals = virtuals;
   }
-
-  target.virtuals = virtuals;
 
   target._emitter.on("missingProperty", function(property) {
     if (!(property in target.virtuals)) return;
     target.virtuals[property].call(target, function(err, value) {
       if (err) return target._emitter.emit("error", err);
 
-      // for testing
-      if (!process.browser) return target.set(property, value);
-
-      // enforce async
-      process.nextTick(function() {
+      /* istanbul ignore else */
+      if (!process.browser) {
         target.set(property, value);
-      });
+      } else {
+        process.nextTick(function() {
+          target.set(property, value);
+        });
+      }
     });
   });
 };
 
 }).call(this,require('_process'))
-},{"_process":11,"xtend":17}],8:[function(require,module,exports){
+},{"_process":11,"xtend/mutable":18}],8:[function(require,module,exports){
 module.exports = function(target, property, load, onLoad) {
   if (!target._singletons) target._singletons = {};
   var event = "singleton:" + property;
@@ -1152,6 +1156,23 @@ function extend() {
     var target = {}
 
     for (var i = 0; i < arguments.length; i++) {
+        var source = arguments[i]
+
+        for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+                target[key] = source[key]
+            }
+        }
+    }
+
+    return target
+}
+
+},{}],18:[function(require,module,exports){
+module.exports = extend
+
+function extend(target) {
+    for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i]
 
         for (var key in source) {
