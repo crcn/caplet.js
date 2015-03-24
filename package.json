@@ -11,7 +11,7 @@
     "data"
   ],
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp lint jscs test"
   },
   "browser": {
     "caplet": "./lib/index.js"
@@ -35,13 +35,13 @@
     "express": "^4.12.3",
     "gulp": "^3.8.11",
     "gulp-istanbul": "^0.6.0",
+    "gulp-jscs": "^1.4.0",
     "gulp-jshint": "^1.9.4",
     "gulp-mocha": "^2.0.0",
     "gulp-plumber": "^1.0.0",
     "gulp-react": "^3.0.1",
     "gulp-uglify": "^1.1.0",
     "istanbul": "^0.3.6",
-    "jscs": "^1.11.3",
     "jsdom": "^4.0.4",
     "jshint": "^2.6.0",
     "karma": "^0.12.31",

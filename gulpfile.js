@@ -8,6 +8,8 @@ var browserify  = require("browserify");
 var uglify      = require("gulp-uglify");
 var source      = require("vinyl-source-stream");
 var buffer      = require("vinyl-buffer");
+var jscs        = require("gulp-jscs");
+var jshint        = require("gulp-jshint");
 var browserifyMiddlewate  = require("browserify-middleware");
 var express  = require("express");
 
@@ -94,10 +96,10 @@ gulp.task("lint", function() {
 /**
  */
 
-gulp.task("jsxcs", function() {
+gulp.task("jscs", function() {
     return gulp.
     src(paths.appFiles).
-    pipe(jsxcs({
+    pipe(jscs({
         "preset": "google",
         "requireParenthesesAroundIIFE": true,
         "maximumLineLength": 120,
@@ -112,6 +114,16 @@ gulp.task("jsxcs", function() {
 
         "safeContextKeyword": "self"
     }))
+});
+
+/**
+ */
+
+gulp.task("lint", function() {
+    return gulp.
+    src(paths.appFiles).
+    pipe(jshint()).
+    pipe(jshint.reporter('default'));
 });
 
 /**
