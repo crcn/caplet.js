@@ -93,9 +93,9 @@ describe(__filename + "#", function() {
         expect(i).to.be(1);
     });
 
-    it("calls didChange if it's specified", function() {
+    it("calls onChange if it's specified", function() {
         var i = 0;
-        var ChildCollection = Collection.extend({ didChange: function(){ i++ }});
+        var ChildCollection = Collection.extend({ onChange: function(){ i++ }});
         var c = new ChildCollection();
         c.create(1);
         expect(i).to.be(1);
@@ -113,13 +113,13 @@ describe(__filename + "#", function() {
     });
 
 
-    it("only calls didChange after everything has been initialized", function() {
+    it("only calls onChange after everything has been initialized", function() {
         var i = 0;
         var ChildCollection = Collection.createClass({
             initialize: function() {
                 this.set("b", 2);
             },
-            didChange: function() {
+            onChange: function() {
                 i++;
             }
         });

@@ -148,10 +148,10 @@ describe(__filename + "#", function() {
         expect(m.a).to.be("b");
     });
 
-    it("calls didChange on the model if the model has changed", function() {
+    it("calls onChange on the model if the model has changed", function() {
 
         var ChildModel = Model.createClass({
-            didChange: function() {
+            onChange: function() {
                 this.set("fullName", this.firstName + " " + this.lastName);
             }
         });
@@ -161,13 +161,13 @@ describe(__filename + "#", function() {
         expect(m.fullName).to.be("a b");
     });
 
-    it("only calls didChange after everything has been initialized", function() {
+    it("only calls onChange after everything has been initialized", function() {
         var i = 0;
         var ChildModel = Model.createClass({
             initialize: function() {
                 this.set("b", 2);
             },
-            didChange: function() {
+            onChange: function() {
                 i++;
             }
         });

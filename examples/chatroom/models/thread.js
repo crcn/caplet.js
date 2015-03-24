@@ -1,17 +1,33 @@
-var Caplet   = require("caplet");
+var caplet   = require("caplet");
 var Messages = require("./messages");
 
-var Thread = Caplet.createModelClass({
-    getInitialProperties: function() {
-        return {
-            messages: Messages({ thread: this })
+module.exports = caplet.createModelClass({
+
+    /**
+     */
+
+    virtuals: {
+        messages: function(onLoad) {
+            caplet.load(Messages({ thread: this }), function(onLoad) {
+                db.messages.find({ threadId: this.thread.uid }, onLoad);
+            }, onLoad);
         }
     },
-    didChange: function() {
-        this.set("unreadCount", this.messages.filter(function(message) {
-            return message.read;
+
+    /**
+     */
+
+    initialize: function() {
+        caplet.setVirtuals(this, this.virtuals);
+    },
+
+    /**
+     */
+
+    onChange: function() {
+        this.set("unreadMessageCount", (this.messages || []).filter(function(message) {
+            return !message.read;
         }).length);
     }
-});
 
-module.exports = Thread;
+});

@@ -1,6 +1,6 @@
 {
   "name": "caplet",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Models library for JavaScript",
   "main": "./lib/index.js",
   "keywords": [
@@ -12,6 +12,9 @@
   ],
   "scripts": {
     "test": "gulp test"
+  },
+  "browser": {
+    "caplet": "./lib/index.js"
   },
   "repository": {
     "type": "git",

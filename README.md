@@ -194,6 +194,10 @@ var Person = Caplet.createModelClass({
 });
 ````
 
+#### Model.onDataChange(newData, oldData)
+
+called when the `data` property changes
+
 #### Model.toJSON()
 
 calls `toData()`
@@ -264,6 +268,10 @@ var People = Caplet.createCollectionClass({
 });
 ```
 
+#### Collection.onDataChange(newData, oldData)
+
+called when the `data` property changes
+
 #### Collection.modelClass
 
 The model class to instantiate for each data item
@@ -298,7 +306,7 @@ var person = people.create({ name: "Gordon" });
 console.log(people.length); // 1
 ```
 
-#### Collection.didChange()
+#### Collection.onChange()
 
 override this if you want to listen for any changes on the collection 
 
@@ -316,7 +324,7 @@ var Todos = Caplet.createCollectionClass({
             allComplete: this._isAllComplete();
         }
     },
-    didChange: function() {
+    onChange: function() {
         this.setProperties(this.getInitialProperties());
     },
     _isAllComplete: function() {
@@ -336,8 +344,6 @@ console.log(todos.allComplete); // false
 todos.at(0).set("complete", true);
 console.log(todos.allComplete); // true
 ```
-
-
 
 #### Collection.at(index)
 

@@ -161,8 +161,8 @@ gulp.task("default", function () {
 gulp.task("example-server", function (complete) {
     var server = express();
     var port;
-    server.use("/js/bundle.js", browserifyMiddlewate(__dirname + "/examples/" + (options.example || "default") + "/index.js", { grep:/\.jsx$/,transform: [require("reactify")]}));
-    server.use(express.static(__dirname + "/examples"));
+    server.use("/js/bundle.js", browserifyMiddlewate(__dirname + "/examples/" + (options.example || "default") + "/index.js", { extensions: [".jsx"],grep:/\.jsx$/,transform: [require("reactify")]}));
+    server.use(express.static(__dirname + "/examples/_static"));
     server.listen(port = Number(options.port || 8080));
     console.log("running example server on port %d", port);
 });
