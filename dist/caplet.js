@@ -481,6 +481,8 @@ module.exports = {
     var forceUpdate = this.forceUpdate.bind(this);
     for (var key in dict) {
       var value = dict[key];
+
+      /* istanbul ignore else */
       if (value && value.watch) {
         this._watchers.push(dict[key].watch(forceUpdate));
       }
@@ -1037,7 +1039,7 @@ protoclass(WatchableObject, {
 
       if (!cv) return;
 
-      if (cv.get) return cv.get(property);
+      if (cv.get) return cv.get(chain.slice(i + 1));
     }
 
     // might be a bindable objectc
