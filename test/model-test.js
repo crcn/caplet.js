@@ -178,7 +178,7 @@ describe(__filename + "#", function() {
     var i = 0;
     var ChildModel = Model.createClass({
       initialize: function() {
-        this.set("b", 2);
+        this.set("b", 5);
       },
       onChange: function() {
         i++;

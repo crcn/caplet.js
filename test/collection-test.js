@@ -82,7 +82,7 @@ describe(__filename + "#", function() {
     var i = 0;
     var w = c.watch(function() { i++; });
     c.at(0).set("data", 4);
-    c.at(0).set("data", 4);
+    c.at(0).set("data", 5);
     expect(i).to.be(2);
   });
 
@@ -147,7 +147,7 @@ describe(__filename + "#", function() {
     });
 
     var c = new ChildCollection({ a: 1,  data: [] });
-    c.set("b", 2);
+    c.set("b", 4);
     expect(i).to.be(1);
   });
 
@@ -175,6 +175,6 @@ describe(__filename + "#", function() {
     });
 
     c.at(0).set("data", 10);
-    expect(sum).to.be(10);
+    expect(sum).to.be(15);
   });
 });
