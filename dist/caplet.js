@@ -70,9 +70,7 @@ function Collection(sourceOrProperties) {
 
   var self = this;
 
-  watchProperty(this, "data", function(newData, oldData) {
-    self.onDataChange(newData, oldData);
-  }).trigger();
+  watchProperty(this, "data", this.onDataChange).trigger();
 
   this.watch(function() {
     self._watchModels();
@@ -303,9 +301,7 @@ function Model(properties) {
 
   var self = this;
 
-  watchProperty(this, "data", function(newData, oldData) {
-    self.onDataChange(newData, oldData);
-  }).trigger();
+  watchProperty(this, "data", this.onDataChange).trigger();
 
   this.initialize();
 
@@ -477,7 +473,7 @@ module.exports = function(target, property, load, onLoad) {
     }
   };
 
-  load(function(err, value) {
+  load.call(target, function(err, value) {
     target._emitter.emit.apply(target._emitter, [event, err, value]);
   });
 
@@ -590,7 +586,7 @@ PropertyWatcher.prototype.trigger = function() {
   }
 
   this.oldValue = currentValue;
-  this.listener(currentValue, this.oldValue);
+  this.listener.call(this.target, currentValue, this.oldValue);
 
   return this;
 };

@@ -25,4 +25,11 @@ describe(__filename + "#", function() {
     });
     expect(error.message).to.be("fail");
   });
+
+  it("context of load is the model", function() {
+    var model = new Model();
+    Caplet.load(model, function(onLoad) {
+      expect(this).to.be(model);
+    });
+  });
 });

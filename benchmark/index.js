@@ -6,12 +6,6 @@ var suite = new Benchmark.Suite;
 var ChildModel      = caplet.createModelClass();
 var ChildCollection = caplet.createCollectionClass();
 
-
-function clazz() {
-
-}
-
-
 suite
 .add('new Model()', function() {
   new caplet.Model();

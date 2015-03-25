@@ -21,4 +21,17 @@ describe(__filename + "#", function() {
     });
     expect(i).to.be(1);
   });
+
+  it("context of update & create are model", function() {
+    var model = new Model({});
+    Caplet.save(model, function() {
+      expect(this).to.be(model);
+    });
+
+    model = new Model({ uid: 11 });
+
+    Caplet.save(model, function() { }, function() {
+      expect(this).to.be(model);
+    });
+  });
 });
