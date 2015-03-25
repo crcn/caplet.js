@@ -42,7 +42,7 @@ DBCollection.prototype.findOne = function(query, onFind) {
         var filtered = sift(query, this._items);
         if (!filtered.length) return onFind();
         model.set("data", filtered[0]);
-        onFind(null, model);
+        if (onFind) onFind(null, model);
     }.bind(this));
     return model;
 }

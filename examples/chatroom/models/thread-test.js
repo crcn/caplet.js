@@ -26,6 +26,11 @@ describe(__filename + "#", function() {
     });
   });
 
+  it("has an initial unreadMessage count of 0", function() {
+    var m = Thread();
+    expect(m.unreadMessageCount).to.be(0);
+  });
+
   it("can add a message", function(next) {
     var m = Thread({ uid: "thread1" });
     m.addMessage({ text: "hello" }, function() {
@@ -42,6 +47,33 @@ describe(__filename + "#", function() {
         expect(m.messages.length).to.be(1);
         next();
       });
+    });
+  });
+
+  it("updates the unreadMessageCount when a new message is added", function(next) {
+    var m = Thread({ uid: "thread1" });
+    m.addMessage({ text: "hello" }, function() {
+      expect(m.unreadMessageCount).to.be(1);
+      next();
+    });
+  });
+
+  it("does not modify the unreadMessageCount if a new message has already been flagged as read", function(next) {
+
+    var m = Thread({ uid: "thread1" });
+    m.addMessage({ text: "hello", read: true }, function() {
+      expect(m.unreadMessageCount).to.be(0);
+      next();
+    });
+  });
+
+  it("can mark a new message as read & update the unreadMessageCount", function(next) {
+    var m = Thread({ uid: "thread1" });
+    m.addMessage({ text: "hello" }, function(err, message) {
+      expect(m.unreadMessageCount).to.be(1);
+      message.set("read", true);
+      expect(m.unreadMessageCount).to.be(0);
+      next();
     });
   });
 });

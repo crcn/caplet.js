@@ -102,4 +102,21 @@ describe(__filename + "#", function() {
     c.get("a");
     expect(error.message).to.be("abba");
   });
+
+  it("can use the wildcard property", function() {
+    var ChildModel = Model.extend();
+    var c = new ChildModel();
+
+    Caplet.setVirtuals(c, {
+      "*": function(property, next) {
+        next(null, property);
+      }
+    });
+
+    c.get("a");
+    expect(c.get("a")).to.be("a");
+
+    c.get("b");
+    expect(c.get("b")).to.be("b");
+  });
 });

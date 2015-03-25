@@ -1,17 +1,40 @@
 var caplet   = require("../../../");
 
 module.exports = caplet.createModelClass({
+
+    /**
+     */
+
+    unreadMessageCount: 0,
     
     /**
      */
 
     virtuals: {
+
+        // start computations on messages only as they're
+        // demanded by the application
         messages: function(onLoad) {
-            app.database.messages.find({ threadId: this.uid }, onLoad);
+            var messages = app.database.messages.find({ threadId: this.uid }, onLoad);
+
+            // update unreadMessageCount whenever the messages collection
+            // changes
+            messages.watch(function() {
+                this.set("unreadMessageCount", messages.filter(function(message) {
+                    return !message.read;
+                }).length);
+            }.bind(this));
         },
 
-        // computed property from messages collection
+        // start computing participants
         participants: function(onLoad) {
+
+            // create the collection immediately so we only
+            // apply an update to an existing collection (Users)
+            // whenever messages changes
+            var users = app.models.Users();
+
+            // pluck participants from the messages & update users
             caplet.watchProperty(this, "messages", function(messages) {
                 
                 var participants = [];
@@ -23,9 +46,9 @@ module.exports = caplet.createModelClass({
                     participants.push({ uid: message.userId });
                 });
 
-                onLoad(void 0, app.models.Users({
-                    data: participants
-                }));
+                users.set("data", participants);
+
+                onLoad(void 0, users);
             }).trigger();
         }
     },
@@ -44,15 +67,5 @@ module.exports = caplet.createModelClass({
         caplet.getAsync(this, "messages", function(err, messages) {
             messages.create(properties).save(onSave);
         }); 
-    },
-
-    /**
-     */
-
-    onChange: function() {
-        var messages = this.messages || [];
-        this.set("unreadMessageCount", messages.filter(function(message) {
-            return !message.read;
-        }).length);
     }
 });
