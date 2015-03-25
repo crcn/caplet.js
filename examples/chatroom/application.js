@@ -8,9 +8,9 @@ module.exports = caplet.createModelClass({
   models: models,
   initialize: function() {
     this.database = {
-      threads  : new Database.Collection(models.Threads),
-      messages : new Database.Collection(models.Messages),
-      users    : new Database.Collection(models.Users)
+      threads  : new Database.Collection("threads", models.Threads),
+      messages : new Database.Collection("messages", models.Messages),
+      users    : new Database.Collection("users", models.Users)
     };
   },
   render: function(element) {

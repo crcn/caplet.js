@@ -1,10 +1,18 @@
-var sift = require("sift");
+var sift  = require("sift");
+var store = process.browser ? require("store") : {
+    get: function(key) {
+    },
+    set: function(key, value) {
+    }
+};
 
 var uid = String(Date.now() + "_" + Math.round(Math.random() * 99999999));
 
-function DBCollection(modelCollectionClass) {
+function DBCollection(name, modelCollectionClass) {
+
     this.modelCollectionClass = modelCollectionClass;
     this.modelClass           = modelCollectionClass.prototype.modelClass;
+    this.name                 = name;
 
     this._items = [];
     this._i     = 0;
@@ -35,6 +43,7 @@ DBCollection.prototype.save = function(model, onSave) {
         this._items.push(model.toData());
     }
 
+    // store.set(this.name, this._items);
 
     onSave(void 0, model);
 }
