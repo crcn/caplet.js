@@ -166,7 +166,7 @@ describe(__filename + "#", function() {
       }
     });
 
-    var c = new ChildCollection({data:[1,2,3]});
+    var c = new ChildCollection({data:[1, 2, 3]});
     expect(c.sum).to.be(6);
     var sum = 0;
 
