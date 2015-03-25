@@ -20,6 +20,7 @@ module.exports = caplet.createModelClass({
     ];
 
     this.set("allThreads", this.database.threads.all());
+    this.set("currentThread", this.database.threads.findOne({uid:"thread1"}));
   },
   render: function(element) {
       React.render(React.createElement(MainView), element);
