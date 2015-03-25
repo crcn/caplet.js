@@ -16,7 +16,6 @@ var less                  = require("gulp-less");
 var concat                = require("gulp-concat");
 var karma                 = require("karma").server;
 var options               = require("yargs").argv;
-var ignore                = require("gulp-ignore");
 var browserSync           = require("browser-sync");
 
 /**
