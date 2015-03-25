@@ -130,6 +130,24 @@ describe(__filename + "#", function() {
     expect(i).to.be(1);
   });
 
+  it("returns the missing property if set when 'missingProperty' is omitted", function() {
+    var model = new Model();
+    model._emitter.on("missingProperty", function(property) {
+      model.set(property, {b:{c:{d:1}}});
+    });
+
+    expect(model.get("a.b.c.d")).to.be(1);
+  });
+
+  it("returns void if missing property is set but the keypath is undefined", function() {
+    var model = new Model();
+    model._emitter.on("missingProperty", function(property) {
+      model.set(property, 1);
+    });
+
+    expect(model.get("a.b.c.d")).to.be(void 0);
+  });
+
   it("equals true if the data is identical", function() {
     var data = 1;
     var a = new Model(data);

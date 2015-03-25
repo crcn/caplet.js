@@ -22,7 +22,7 @@ if (process.browser) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./bind-property":2,"./collection":3,"./get-async":4,"./load":5,"./model":6,"./save":7,"./set-virtuals":8,"./singleton":9,"./watch-models-mixin":10,"./watch-property":11,"_process":12}],2:[function(require,module,exports){
+},{"./bind-property":2,"./collection":3,"./get-async":4,"./load":5,"./model":7,"./save":8,"./set-virtuals":9,"./singleton":10,"./watch-models-mixin":11,"./watch-property":12,"_process":13}],2:[function(require,module,exports){
 var watchProperty = require("./watch-property");
 
 module.exports = function(fromTarget, fromProperty, toTarget, toProperty) {
@@ -41,12 +41,13 @@ module.exports = function(fromTarget, fromProperty, toTarget, toProperty) {
   return watcher;
 };
 
-},{"./watch-property":11}],3:[function(require,module,exports){
-var WatchableCollection = require("watchable-collection");
-var FastEventEmitter    = require("fast-event-emitter");
-var watchProperty       = require("./watch-property");
-var Model               = require("./model").createClass();
-var extend              = require("xtend/mutable");
+},{"./watch-property":12}],3:[function(require,module,exports){
+var WatchableCollection  = require("watchable-collection");
+var FastEventEmitter     = require("fast-event-emitter");
+var watchProperty        = require("./watch-property");
+var Model                = require("./model").createClass();
+var extend               = require("xtend/mutable");
+var missingPropertyMixin = require("./missing-property-mixin");
 
 function Collection(sourceOrProperties) {
 
@@ -61,12 +62,12 @@ function Collection(sourceOrProperties) {
   }
 
   if (this.getInitialProperties) properties = extend({}, this.getInitialProperties(), properties);
+  this._emitter      = new FastEventEmitter();
 
   WatchableCollection.call(this);
   this.setProperties(properties);
 
   this.createModel   = this.createModel.bind(this);
-  this._emitter      = new FastEventEmitter();
 
   var self = this;
 
@@ -154,6 +155,11 @@ WatchableCollection.extend(Collection, {
     properties.source = this.mergeSource(properties.source);
     this.setProperties(properties);
   },
+
+  /**
+   */
+
+  get: missingPropertyMixin.get,
 
   /**
    */
@@ -248,7 +254,7 @@ Collection.createClass = Collection.extend.bind(Collection);
 
 module.exports = Collection;
 
-},{"./model":6,"./watch-property":11,"fast-event-emitter":13,"watchable-collection":15,"xtend/mutable":18}],4:[function(require,module,exports){
+},{"./missing-property-mixin":6,"./model":7,"./watch-property":12,"fast-event-emitter":14,"watchable-collection":16,"xtend/mutable":19}],4:[function(require,module,exports){
 var watchProperty = require("./watch-property");
 
 module.exports = function(target, keypath, onLoad) {
@@ -261,7 +267,7 @@ module.exports = function(target, keypath, onLoad) {
   watcher.trigger();
 };
 
-},{"./watch-property":11}],5:[function(require,module,exports){
+},{"./watch-property":12}],5:[function(require,module,exports){
 var singleton = require("./singleton");
 
 module.exports = function(target, load, onLoad) {
@@ -272,11 +278,26 @@ module.exports = function(target, load, onLoad) {
   });
 };
 
-},{"./singleton":9}],6:[function(require,module,exports){
+},{"./singleton":10}],6:[function(require,module,exports){
+var WatchableObject  = require("watchable-object");
+
+module.exports = {
+  get: function(keypath) {
+    var ret = WatchableObject.prototype.get.call(this, keypath);
+    if (ret != void 0) return ret;
+    var missingProperty = (typeof keypath === "string" ? keypath.split(".") : keypath)[0];
+    if (!this._missingProperties) this._missingProperties = {};
+    if (this._missingProperties[missingProperty]) return;
+    this._emitter.emit("missingProperty", this._missingProperties[missingProperty] = missingProperty);
+    if (this[missingProperty] != void 0) return this.get(keypath);
+  }
+};
+},{"watchable-object":18}],7:[function(require,module,exports){
 var WatchableObject  = require("watchable-object");
 var FastEventEmitter = require("fast-event-emitter");
 var watchProperty    = require("./watch-property");
 var extend           = require("xtend/mutable");
+var missingPropertyMixin = require("./missing-property-mixin");
 
 /**
  */
@@ -376,14 +397,7 @@ WatchableObject.extend(Model, {
    * asynchronous
    */
 
-  get: function(keypath) {
-    var ret = WatchableObject.prototype.get.call(this, keypath);
-    if (ret != void 0) return ret;
-    var missingProperty = (typeof keypath === "string" ? keypath.split(".") : keypath)[0];
-    if (!this._missingProperties) this._missingProperties = {};
-    if (this._missingProperties[missingProperty]) return;
-    this._emitter.emit("missingProperty", this._missingProperties[missingProperty] = missingProperty);
-  },
+  get: missingPropertyMixin.get,
 
   /**
    */
@@ -423,8 +437,9 @@ Model.createClass = Model.extend.bind(Model);
 
 module.exports = Model;
 
-},{"./watch-property":11,"fast-event-emitter":13,"watchable-object":17,"xtend/mutable":18}],7:[function(require,module,exports){
+},{"./missing-property-mixin":6,"./watch-property":12,"fast-event-emitter":14,"watchable-object":18,"xtend/mutable":19}],8:[function(require,module,exports){
 module.exports = function(target, create, update, onSave) {
+  if (!onSave) onSave = function() { };
   if (target.uid) {
     return update.call(target, onSave);
   } else {
@@ -432,7 +447,7 @@ module.exports = function(target, create, update, onSave) {
   }
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (process){
 var extend = require("xtend/mutable");
 
@@ -444,9 +459,19 @@ module.exports = function(target, virtuals) {
     target.__virtuals = virtuals;
   }
 
+  function getVirtual (property) {
+    if (target.__virtuals[property]) return target.__virtuals[property];
+    if (target.__virtuals["*"]) return function(onLoad) {
+      target.__virtuals["*"].call(this, property, onLoad);
+    }
+  }
+
   target._emitter.on("missingProperty", function(property) {
-    if (!(property in target.__virtuals)) return;
-    target.__virtuals[property].call(target, function(err, value) {
+
+    var virtual = getVirtual(property);
+
+    if (!virtual) return;
+    virtual.call(target, function(err, value) {
       if (err) return target._emitter.emit("error", err);
 
       /* istanbul ignore else */
@@ -462,7 +487,7 @@ module.exports = function(target, virtuals) {
 };
 
 }).call(this,require('_process'))
-},{"_process":12,"xtend/mutable":18}],9:[function(require,module,exports){
+},{"_process":13,"xtend/mutable":19}],10:[function(require,module,exports){
 module.exports = function(target, property, load, onLoad) {
   if (!target._singletons) target._singletons = {};
   var event = "singleton:" + property;
@@ -483,7 +508,7 @@ module.exports = function(target, property, load, onLoad) {
   return singleton;
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 function _hasChanged(from, to) {
   for (var key in from) {
@@ -562,7 +587,7 @@ module.exports = {
   }
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
 /**
  */
@@ -581,11 +606,20 @@ function PropertyWatcher (target, property, listener) {
 /**
  */
 
-PropertyWatcher.prototype.trigger = function() {
+PropertyWatcher.prototype.trigger = function(force) {
 
   var currentValue = this.target.get(this.property);
-  if (this.oldValue === currentValue) {
+  if (force !== true && this.oldValue === currentValue) {
     return this;
+  }
+
+  if (this._valueWatcher) this._valueWatcher.dispose();
+
+  if (currentValue && currentValue.watch) {
+    var self = this;
+    this._valueWatcher = currentValue.watch(function() {
+      self.trigger(true);
+    });
   }
 
   this.oldValue = currentValue;
@@ -598,6 +632,7 @@ PropertyWatcher.prototype.trigger = function() {
  */
 
 PropertyWatcher.prototype.dispose = function() {
+  if (this._valueWatcher) this._valueWatcher.dispose();
   this._disposable.dispose();
   return this;
 };
@@ -609,7 +644,7 @@ module.exports = function(target, property, listener) {
   return new PropertyWatcher(target, property, listener);
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -669,7 +704,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 var protoclass = require("protoclass");
 
@@ -834,7 +869,7 @@ EventEmitter.prototype.removeAllListeners = function (event) {
 
 module.exports = EventEmitter;
 
-},{"protoclass":14}],14:[function(require,module,exports){
+},{"protoclass":15}],15:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
@@ -910,7 +945,7 @@ protoclass.setup = function (child) {
 
 
 module.exports = protoclass;
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var WatchableObject = require("watchable-object");
 var watchProperty   = require("./watchProperty");
 
@@ -1022,7 +1057,7 @@ WatchableObject.extend(WatchableCollection, {
 });
 
 module.exports = WatchableCollection;
-},{"./watchProperty":16,"watchable-object":17}],16:[function(require,module,exports){
+},{"./watchProperty":17,"watchable-object":18}],17:[function(require,module,exports){
 
 
 module.exports = function(target, property, listener) {
@@ -1047,7 +1082,7 @@ module.exports = function(target, property, listener) {
 
     return watcher;
 }
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -1235,7 +1270,7 @@ protoclass(WatchableObject, {
 
 module.exports = WatchableObject;
 
-},{"protoclass":14}],18:[function(require,module,exports){
+},{"protoclass":15}],19:[function(require,module,exports){
 module.exports = extend
 
 function extend(target) {
