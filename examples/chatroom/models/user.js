@@ -6,8 +6,11 @@ module.exports = caplet.createModelClass({
      */
 
     virtuals: {
-        messages: function(onLoad) {
+        "messages": function(onLoad) {
             app.database.messages.find({ userId: this.uid }, onLoad);
+        },
+        "*": function(onLoad) {
+
         }
     },
 
@@ -15,6 +18,6 @@ module.exports = caplet.createModelClass({
      */
 
     initialize: function() {
-        caplet.setVirtuals(this, this.virtuals);
+        caplet.setVirtuals(this, this.virtuals);  
     }
 });
