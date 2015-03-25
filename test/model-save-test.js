@@ -44,5 +44,5 @@ describe(__filename + "#", function() {
     }, function() {
       next();
     });
-  })
+  });
 });
