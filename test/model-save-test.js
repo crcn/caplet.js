@@ -34,4 +34,15 @@ describe(__filename + "#", function() {
       expect(this).to.be(model);
     });
   });
+
+  it("can pass a callback", function(next) {
+
+    model = new Model({ uid: 11 });
+    Caplet.save(model, function() { }, function(onLoad) {
+      expect(this).to.be(model);
+      onLoad();
+    }, function() {
+      next();
+    });
+  })
 });

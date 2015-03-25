@@ -684,6 +684,7 @@ module.exports = {
   }
 };
 
+
 },{"watchable-object":194}],23:[function(require,module,exports){
 var WatchableObject  = require("watchable-object");
 var FastEventEmitter = require("fast-event-emitter");
@@ -857,7 +858,7 @@ module.exports = function(target, virtuals) {
     if (target.__virtuals[property]) return target.__virtuals[property];
     if (target.__virtuals["*"]) return function(onLoad) {
       target.__virtuals["*"].call(this, property, onLoad);
-    }
+    };
   }
 
   target._emitter.on("missingProperty", function(property) {
@@ -878,7 +879,6 @@ module.exports = function(target, virtuals) {
         });
       }
     }
-
 
     var value = virtual.call(target, onLoad);
     if (value != void 0) onLoad(void 0, value);
