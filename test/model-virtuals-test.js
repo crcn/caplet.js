@@ -119,4 +119,43 @@ describe(__filename + "#", function() {
     c.get("b");
     expect(c.get("b")).to.be("b");
   });
+
+  it("sets the returned value as a property on the model", function() {
+
+    var c = new Model();
+
+    Caplet.setVirtuals(c, {
+        "name": function() {
+          return "abba";
+        }
+    });
+
+    expect(c.get("name")).to.be("abba");
+  });
+
+  it("can return a false value and still set the virtual", function() {
+
+    var c = new Model();
+
+    Caplet.setVirtuals(c, {
+        "read": function() {
+          return false;
+        }
+    });
+
+    expect(c.get("read")).to.be(false);
+  });
+
+  it("can set the value in the virtual property", function() {
+
+    var c = new Model();
+
+    Caplet.setVirtuals(c, {
+        "name": function() {
+          this.set("name", "abba");
+        }
+    });
+
+    expect(c.get("name")).to.be("abba");
+  });
 });

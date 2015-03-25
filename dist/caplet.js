@@ -471,7 +471,8 @@ module.exports = function(target, virtuals) {
     var virtual = getVirtual(property);
 
     if (!virtual) return;
-    virtual.call(target, function(err, value) {
+
+    function onLoad(err, value) {
       if (err) return target._emitter.emit("error", err);
 
       /* istanbul ignore else */
@@ -482,7 +483,11 @@ module.exports = function(target, virtuals) {
           target.set(property, value);
         });
       }
-    });
+    }
+
+
+    var value = virtual.call(target, onLoad);
+    if (value != void 0) onLoad(void 0, value);
   });
 };
 
