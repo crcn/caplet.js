@@ -1,4 +1,5 @@
 var caplet = require("../../../");
+var ok     = require("okay");
 
 module.exports = caplet.createModelClass({
 
@@ -6,11 +7,11 @@ module.exports = caplet.createModelClass({
      */
 
     virtuals: {
-        "messages": function(onLoad) {
-            app.database.messages.find({ userId: this.uid }, onLoad);
+        "messages": function() {
+            app.database.messages.find({ userId: this.uid }, ok(this.set.bind(this, "messages")));
         },
-        "*": function(onLoad) {
-
+        "*": function() {
+            app.database.users.findOne({ uid: this.uid }, this);
         }
     },
 

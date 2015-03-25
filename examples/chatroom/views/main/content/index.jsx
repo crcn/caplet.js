@@ -7,8 +7,10 @@ module.exports = React.createClass({
       }
     },
     render: function() {
-        return <div className="row">
-            content
+        return <div className="row content">
+            <div className="col-sm-12">
+                content!
+            </div>
         </div>;
     }
 });

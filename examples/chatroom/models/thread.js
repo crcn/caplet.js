@@ -1,4 +1,5 @@
 var caplet   = require("../../../");
+var ok       = require("okay");
 
 module.exports = caplet.createModelClass({
 
@@ -14,8 +15,8 @@ module.exports = caplet.createModelClass({
 
         // start computations on messages only as they're
         // demanded by the application
-        messages: function(onLoad) {
-            var messages = app.database.messages.find({ threadId: this.uid }, onLoad);
+        messages: function() {
+            var messages = app.database.messages.find({ threadId: this.uid }, ok(this.set.bind(this, "messages")));
 
             // update unreadMessageCount whenever the messages collection
             // changes
@@ -47,8 +48,7 @@ module.exports = caplet.createModelClass({
                 });
 
                 users.set("data", participants);
-
-                onLoad(void 0, users);
+                this.set("participants", users);
             }).trigger();
         }
     },

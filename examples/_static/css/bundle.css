@@ -1,0 +1,30 @@
+.main {
+  width: 100%;
+  padding: 0px;
+}
+
+.content {
+  padding-top: 15px;
+}
+
+.sidebar {
+  height: 100%;
+  border-right: 1px solid #444;
+}
+.sidebar ul {
+  padding: 0px;
+  margin: 0px;
+  list-style-type: none;
+}
+.sidebar ul li {
+  display: block;
+  border-bottom: 1px solid #444;
+}
+.sidebar ul li a {
+  display: block;
+  text-decoration: none;
+  padding: 20px;
+}
+.sidebar ul li a:hover {
+  background-color: #999;
+}

@@ -12,10 +12,11 @@ var jscs                  = require("gulp-jscs");
 var jshint                = require("gulp-jshint");
 var rename                = require("gulp-rename");
 var coveralls             = require("gulp-coveralls");
-var browserifyMiddlewate  = require("browserify-middleware");
-var express               = require("express");
+var less                  = require("gulp-less");
+var concat                = require("gulp-concat");
 var karma                 = require("karma").server;
 var options               = require("yargs").argv;
+var ignore                = require("gulp-ignore");
 var browserSync           = require("browser-sync");
 
 /**
@@ -24,9 +25,11 @@ var browserSync           = require("browser-sync");
 var paths = {
   testFiles : ["test/**/*-test.js", "./examples/**/*-test.js"],
   appFiles  : ["lib/**/*.js"],
-  allFiles  : ["test/**", "lib/**", "examples/**"],
+  allFiles  : ["test/**", "lib/**", "examples/!(_static)/**"],
+  watchFiles  : ["test/**", "lib/**"],
+  lessFiles : ["examples/**/*.less"],
   lintFiles : ["test/**", "lib/**"],
-  covFiles  : ["coverage/**/*"]
+  bsyncFiles  : ["coverage/**/*", "examples/_static/**"]
 };
 
 /**
@@ -76,7 +79,6 @@ gulp.task("bundle", function() {
   pipe(source('caplet.js')).
   pipe(buffer()).
   pipe(gulp.dest('./dist'));
-
 });
 
 /**
@@ -133,6 +135,14 @@ gulp.task("jscs", function() {
   }));
 });
 
+gulp.task("less", function() {
+  return gulp.
+  src(paths.lessFiles).
+  pipe(less()).
+  pipe(concat("bundle.css")).
+  pipe(gulp.dest("./examples/_static/css"));
+});
+
 /**
  */
 
@@ -152,7 +162,7 @@ gulp.task("browser-sync", function(complete) {
     server: {
       baseDir: "./"
     },
-    files: paths.covFiles
+    files: paths.bsyncFiles
   })
 });
 
@@ -187,13 +197,12 @@ gulp.task("default", function () {
 /**
  */
 
-gulp.task("example-server", function (complete) {
-  var server = express();
-  var port;
-  server.use("/js/bundle.js", browserifyMiddlewate(__dirname + "/examples/" + (options.example || "default") + "/index.js", { extensions: [".jsx"],grep:/\.jsx$/,transform: [require("reactify")]}));
-  server.use(express.static(__dirname + "/examples/_static"));
-  server.listen(port = Number(options.port || 8080));
-  console.log("running example server on port %d", port);
+gulp.task("example", function (complete) {
+  return browserify(__dirname + "/examples/" + (options.example || "default") + "/index.js", { extensions: [".jsx"],grep:/\.jsx$/,transform: [require("reactify")]}).
+  bundle().
+  pipe(source('bundle.js')).
+  pipe(buffer()).
+  pipe(gulp.dest('./examples/_static/js'));
 });
 
 /**

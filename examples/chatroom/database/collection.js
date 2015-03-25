@@ -37,12 +37,21 @@ DBCollection.prototype.find = function(query, onFind) {
 }
 
 DBCollection.prototype.findOne = function(query, onFind) {
-    var model = new this.modelClass();
+
+    if (onFind && onFind.watch) {
+        var model = onFind;
+        onFind = void 0;
+    } else {
+        var model = new this.modelClass();
+    }
+
+    if (!onFind) onFind = function() { };
+
     process.nextTick(function() {
         var filtered = sift(query, this._items);
         if (!filtered.length) return onFind();
         model.set("data", filtered[0]);
-        if (onFind) onFind(null, model);
+        onFind(null, model);
     }.bind(this));
     return model;
 }

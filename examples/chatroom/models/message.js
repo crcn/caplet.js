@@ -1,4 +1,5 @@
 var caplet = require("../../../");
+var ok     = require("okay");
 
 module.exports = caplet.createModelClass({
 
@@ -6,11 +7,11 @@ module.exports = caplet.createModelClass({
      */
 
     virtuals: {
-        thread: function(onLoad) {
-            app.database.threads.findOne({ uid: this.threadId }, onLoad);
+        thread: function() {
+            app.database.threads.findOne({ uid: this.threadId }, ok(this.set.bind(this, "thread")));
         },
-        user: function(onLoad) {
-            app.database.users.findOne({ uid: this.userId }, onLoad);
+        user: function() {
+            app.database.users.findOne({ uid: this.userId }, ok(this.set.bind(this, "user")));
         }
     },
 
