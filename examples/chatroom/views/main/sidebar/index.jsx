@@ -3,7 +3,7 @@ var Threads = require("./threads");
 
 module.exports = React.createClass({
     render: function() {
-        return <div className="row">
+        return <div className="row sidebar">
             <Threads />
         </div>;
     }

@@ -18,18 +18,33 @@ function DBCollection(name, modelCollectionClass) {
     this._i     = 0;
 }
 
-DBCollection.prototype.find = function(query, onFind) {
+DBCollection.prototype.all = function(query, onFind) {
+    var collection = new this.modelCollectionClass();
     process.nextTick(function() {
-        onFind(null, new this.modelCollectionClass({ data: sift(query, this._items) }));
+        collection.set("data", this._items);
+        if (onFind) onFind(null, collection);
     }.bind(this));
+    return collection;
+}
+
+DBCollection.prototype.find = function(query, onFind) {
+    var collection = new this.modelCollectionClass();
+    process.nextTick(function() {
+        collection.set("data", sift(query, this._items));
+        if (onFind) onFind(null, collection);
+    }.bind(this));
+    return collection;
 }
 
 DBCollection.prototype.findOne = function(query, onFind) {
+    var model = new this.modelClass();
     process.nextTick(function() {
         var filtered = sift(query, this._items);
         if (!filtered.length) return onFind();
-        onFind(null, new this.modelClass({ data: filtered[0] }));
+        model.set("data", filtered[0]);
+        onFind(null, model);
     }.bind(this));
+    return model;
 }
 
 DBCollection.prototype.save = function(model, onSave) {
