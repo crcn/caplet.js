@@ -15,6 +15,8 @@ exports.watchProperty         = require("./watch-property");
 exports.bindProperty          = require("./bind-property");
 exports.watchModelsMixin      = require("./watch-models-mixin");
 exports.getAsync              = require("./get-async");
+exports.recycle               = require("./recycle");
+exports.reference             = require("./reference");
 
 /* istanbul ignore if */
 if (process.browser) {
@@ -22,7 +24,7 @@ if (process.browser) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./bind-property":2,"./collection":3,"./get-async":4,"./load":5,"./model":7,"./save":8,"./set-virtuals":9,"./singleton":10,"./watch-models-mixin":11,"./watch-property":12,"_process":13}],2:[function(require,module,exports){
+},{"./bind-property":2,"./collection":3,"./get-async":4,"./load":5,"./model":7,"./recycle":8,"./reference":9,"./save":10,"./set-virtuals":11,"./singleton":12,"./watch-models-mixin":13,"./watch-property":14,"_process":15}],2:[function(require,module,exports){
 var watchProperty = require("./watch-property");
 
 module.exports = function(fromTarget, fromProperty, toTarget, toProperty) {
@@ -41,7 +43,7 @@ module.exports = function(fromTarget, fromProperty, toTarget, toProperty) {
   return watcher;
 };
 
-},{"./watch-property":12}],3:[function(require,module,exports){
+},{"./watch-property":14}],3:[function(require,module,exports){
 var WatchableCollection  = require("watchable-collection");
 var FastEventEmitter     = require("fast-event-emitter");
 var watchProperty        = require("./watch-property");
@@ -254,7 +256,7 @@ Collection.createClass = Collection.extend.bind(Collection);
 
 module.exports = Collection;
 
-},{"./missing-property-mixin":6,"./model":7,"./watch-property":12,"fast-event-emitter":14,"watchable-collection":16,"xtend/mutable":19}],4:[function(require,module,exports){
+},{"./missing-property-mixin":6,"./model":7,"./watch-property":14,"fast-event-emitter":16,"watchable-collection":18,"xtend/mutable":21}],4:[function(require,module,exports){
 var watchProperty = require("./watch-property");
 
 module.exports = function(target, keypath, onLoad) {
@@ -267,7 +269,7 @@ module.exports = function(target, keypath, onLoad) {
   watcher.trigger();
 };
 
-},{"./watch-property":12}],5:[function(require,module,exports){
+},{"./watch-property":14}],5:[function(require,module,exports){
 var singleton = require("./singleton");
 
 module.exports = function(target, load, onLoad) {
@@ -278,7 +280,7 @@ module.exports = function(target, load, onLoad) {
   });
 };
 
-},{"./singleton":10}],6:[function(require,module,exports){
+},{"./singleton":12}],6:[function(require,module,exports){
 var WatchableObject  = require("watchable-object");
 
 module.exports = {
@@ -293,7 +295,7 @@ module.exports = {
   }
 };
 
-},{"watchable-object":18}],7:[function(require,module,exports){
+},{"watchable-object":20}],7:[function(require,module,exports){
 var WatchableObject  = require("watchable-object");
 var FastEventEmitter = require("fast-event-emitter");
 var watchProperty    = require("./watch-property");
@@ -438,7 +440,30 @@ Model.createClass = Model.extend.bind(Model);
 
 module.exports = Model;
 
-},{"./missing-property-mixin":6,"./watch-property":12,"fast-event-emitter":14,"watchable-object":18,"xtend/mutable":19}],8:[function(require,module,exports){
+},{"./missing-property-mixin":6,"./watch-property":14,"fast-event-emitter":16,"watchable-object":20,"xtend/mutable":21}],8:[function(require,module,exports){
+module.exports = function(value, clazz, properties) {
+
+  if (value instanceof clazz) {
+    value.setProperties(properties);
+  } else {
+    value = new clazz(properties);
+  }
+
+  return value;
+};
+
+},{}],9:[function(require,module,exports){
+var Model         = require("./model");
+var watchProperty = require("./watch-property");
+
+module.exports = function(target, keypath) {
+  var ref = new Model({ value: target.get(keypath) });
+  watchProperty(target, keypath, ref.set.bind(ref, "value"));
+  watchProperty(ref, "value", target.set.bind(target, "value"));
+  return ref;
+};
+
+},{"./model":7,"./watch-property":14}],10:[function(require,module,exports){
 module.exports = function(target, create, update, onSave) {
   if (!onSave) onSave = function() { };
   if (target.uid) {
@@ -448,7 +473,7 @@ module.exports = function(target, create, update, onSave) {
   }
 };
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function (process){
 var extend = require("xtend/mutable");
 
@@ -492,7 +517,7 @@ module.exports = function(target, virtuals) {
 };
 
 }).call(this,require('_process'))
-},{"_process":13,"xtend/mutable":19}],10:[function(require,module,exports){
+},{"_process":15,"xtend/mutable":21}],12:[function(require,module,exports){
 module.exports = function(target, property, load, onLoad) {
   if (!target._singletons) target._singletons = {};
   var event = "singleton:" + property;
@@ -513,7 +538,7 @@ module.exports = function(target, property, load, onLoad) {
   return singleton;
 };
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 
 function _hasChanged(from, to) {
   for (var key in from) {
@@ -592,7 +617,7 @@ module.exports = {
   }
 };
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 /**
  */
@@ -649,7 +674,7 @@ module.exports = function(target, property, listener) {
   return new PropertyWatcher(target, property, listener);
 };
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -709,7 +734,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 var protoclass = require("protoclass");
 
@@ -874,7 +899,7 @@ EventEmitter.prototype.removeAllListeners = function (event) {
 
 module.exports = EventEmitter;
 
-},{"protoclass":15}],15:[function(require,module,exports){
+},{"protoclass":17}],17:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
@@ -950,7 +975,7 @@ protoclass.setup = function (child) {
 
 
 module.exports = protoclass;
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var WatchableObject = require("watchable-object");
 var watchProperty   = require("./watchProperty");
 
@@ -1062,7 +1087,7 @@ WatchableObject.extend(WatchableCollection, {
 });
 
 module.exports = WatchableCollection;
-},{"./watchProperty":17,"watchable-object":18}],17:[function(require,module,exports){
+},{"./watchProperty":19,"watchable-object":20}],19:[function(require,module,exports){
 
 
 module.exports = function(target, property, listener) {
@@ -1087,7 +1112,7 @@ module.exports = function(target, property, listener) {
 
     return watcher;
 }
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -1275,7 +1300,7 @@ protoclass(WatchableObject, {
 
 module.exports = WatchableObject;
 
-},{"protoclass":15}],19:[function(require,module,exports){
+},{"protoclass":17}],21:[function(require,module,exports){
 module.exports = extend
 
 function extend(target) {
