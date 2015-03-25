@@ -64,14 +64,26 @@ function Collection(sourceOrProperties) {
 
   WatchableCollection.call(this);
   this.setProperties(properties);
+
   this.createModel   = this.createModel.bind(this);
-  this.onDataChange  = this.onDataChange.bind(this);
   this._emitter      = new FastEventEmitter();
 
-  watchProperty(this, "data", this.onDataChange).trigger();
-  this.watch(this._watchModels.bind(this));
+  var self = this;
+
+  watchProperty(this, "data", function(newData, oldData) {
+    self.onDataChange(newData, oldData);
+  }).trigger();
+
+  this.watch(function() {
+    self._watchModels();
+  });
+
   this.initialize();
-  if (this.onChange) this.watch(this.onChange.bind(this));
+
+  if (this.onChange) this.watch(function() {
+    self.onChange();
+  });
+
   this._watchModels();
 
 }
@@ -185,14 +197,17 @@ WatchableCollection.extend(Collection, {
   _watchModels: function() {
     this._unwatchModels();
     this._modelListeners = [];
-    var onChange = this._onChange.bind(this);
+    var self = this;
+    var onChange = function() {
+      self._onChange();
+    };
 
     this.source.forEach(function(model) {
-      this._modelListeners.push(model.watch(onChange));
-      this._modelListeners.push(model._emitter.once("dispose", function() {
-        this.splice(this.indexOf(model), 1);
-      }.bind(this)));
-    }.bind(this));
+      self._modelListeners.push(model.watch(onChange));
+      self._modelListeners.push(model._emitter.once("dispose", function() {
+        self.splice(self.indexOf(model), 1);
+      }));
+    });
   },
 
   /**
@@ -286,10 +301,17 @@ function Model(properties) {
 
   this._emitter = new FastEventEmitter();
 
-  watchProperty(this, "data", this.onDataChange.bind(this)).trigger();
+  var self = this;
+
+  watchProperty(this, "data", function(newData, oldData) {
+    self.onDataChange(newData, oldData);
+  }).trigger();
+
   this.initialize();
 
-  if (this.onChange) this.watch(this.onChange.bind(this));
+  if (this.onChange) this.watch(function() {
+    self.onChange();
+  });
 }
 
 /**
@@ -543,30 +565,49 @@ module.exports = {
 
 },{}],11:[function(require,module,exports){
 
+/**
+ */
+
+function PropertyWatcher (target, property, listener) {
+  this.target   = target;
+  this.listener = listener;
+  this.property = property;
+  this.oldValue = void 0;
+  var self = this;
+  this._disposable = this.target.watch(function() {
+    self.trigger();
+  });
+}
+
+/**
+ */
+
+PropertyWatcher.prototype.trigger = function() {
+
+  var currentValue = this.target.get(this.property);
+  if (this.oldValue === currentValue) {
+    return this;
+  }
+
+  this.oldValue = currentValue;
+  this.listener(currentValue, this.oldValue);
+
+  return this;
+};
+
+/**
+ */
+
+PropertyWatcher.prototype.dispose = function() {
+  this._disposable.dispose();
+  return this;
+};
+
+/**
+ */
+
 module.exports = function(target, property, listener) {
-
-  var oldValue;
-  var disposable;
-
-  var watcher = {
-    trigger: function() {
-      var currentValue = target.get(property);
-      if (oldValue === currentValue) {
-        return watcher;
-      }
-      oldValue = currentValue;
-      listener(currentValue, oldValue);
-      return watcher;
-    },
-    dispose: function() {
-      disposable.dispose();
-      return watcher;
-    }
-  };
-
-  disposable = target.watch(watcher.trigger);
-
-  return watcher;
+  return new PropertyWatcher(target, property, listener);
 };
 
 },{}],12:[function(require,module,exports){
@@ -975,9 +1016,9 @@ WatchableObject.extend(WatchableCollection, {
     _onChange: function() {
 
         // trigger change
-        this.setProperties({
-            length: this.source.length
-        });
+        if (!this.set("length", this.source.length)) {
+            this._triggerChange();
+        }
     }
 });
 
@@ -1116,7 +1157,8 @@ protoclass(WatchableObject, {
     cv[keypath[i]] = value;
 
     this._watchProperty(property, value);
-    if (trigger !== false) this._triggerChange();
+    if (trigger !== false && hasChanged) this._triggerChange();
+    return hasChanged;
   },
 
   /**
@@ -1144,6 +1186,7 @@ protoclass(WatchableObject, {
       if (!self.get(property)) {
         return self._watchProperty(property, void 0);
       }
+      if (self._changing) return;
       self._triggerChange();
     });
   },
@@ -1152,30 +1195,32 @@ protoclass(WatchableObject, {
    */
 
   setProperties: function(properties) {
+    var hasChanged = false;
     for (var key in properties) {
-      this.set(key, properties[key], false);
+      hasChanged = this.set(key, properties[key], false) || hasChanged;
     }
-    this._triggerChange();
+    if (hasChanged) this._triggerChange();
   },
 
   /**
    */
 
-  _triggerChange: function() {
-    if (this._changing) return;
+  _triggerChange: function(defer) {
     this._changing = true;
 
-    if (this._listeners) {
-      if (typeof this._listeners === "function") {
-        this._listeners();
+    var self = this;
+    if (self._listeners) {
+      if (typeof self._listeners === "function") {
+        self._listeners();
       } else {
-        for (var i = this._listeners.length; i--;) {
-          this._listeners[i]();
+        for (var i = self._listeners.length; i--;) {
+          self._listeners[i]();
         }
       }
     }
-    this._changing = false;
+    self._changing = false;
   },
+
 
   /**
    */
