@@ -1,9 +1,7 @@
 var caplet   = require("../../../");
-var Messages = require("./messages");
-var Users    = require("./users");
 
 module.exports = caplet.createModelClass({
-
+    
     /**
      */
 

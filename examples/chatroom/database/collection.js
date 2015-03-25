@@ -24,17 +24,20 @@ DBCollection.prototype.findOne = function(query, onFind) {
     }.bind(this));
 }
 
-DBCollection.prototype.insert = function(data, onFind) {
-    data._id = uid + (this._i++);
-    this._items.push(data);
-    onFind(void 0, data);
+DBCollection.prototype.save = function(model, onSave) {
+
+    var oldData = sift({uid:model.uid}, this._items).shift();
+
+    if (oldData) {
+        this._items.splice(this._items.indexOf(oldData), 1, model.data);
+    } else {
+        model.uid = uid + "_" + (this._i++);
+        this._items.push(model.toData());
+    }
+
+
+    onSave(void 0, model);
 }
 
-DBCollection.prototype.update = function(query, data, onFind) {
-    var item = sift(query, this._items).shift();
-    if (!item) return onUpdate();
-    this._items.splice(this._items.indexOf(item), 1, data);
-    onFind(void 0, data);
-}
 
 module.exports = DBCollection;

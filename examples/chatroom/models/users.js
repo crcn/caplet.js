@@ -1,5 +1,6 @@
 var caplet = require("../../../");
 
+
 module.exports = caplet.createCollectionClass({
-    modelClass: require("./users")
+    modelClass: require("./user")
 });

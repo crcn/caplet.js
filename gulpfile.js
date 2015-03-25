@@ -23,8 +23,9 @@ var browserSync           = require("browser-sync");
 
 var paths = {
   testFiles : ["test/**/*-test.js", "./examples/**/*-test.js"],
-  appFiles  : ["lib/**/*.js"],
-  allFiles  : ["test/**", "lib/**"],
+  appFiles  : ["lib/**/*.js", "examples/**/*.js"],
+  allFiles  : ["test/**", "lib/**", "examples/**"],
+  lintFiles : ["test/**", "lib/**"],
   covFiles  : ["coverage/**/*"]
 };
 
@@ -115,7 +116,7 @@ gulp.task("lint", function() {
 
 gulp.task("jscs", function() {
   return gulp.
-  src(paths.allFiles).
+  src(paths.lintFiles).
   pipe(jscs({
     "preset": "google",
     "requireParenthesesAroundIIFE": true,
@@ -138,7 +139,7 @@ gulp.task("jscs", function() {
 
 gulp.task("jshint", function() {
     return gulp.
-    src(paths.allFiles).
+    src(paths.lintFiles).
     pipe(jshint()).
     pipe(jshint.reporter('default'));
 });

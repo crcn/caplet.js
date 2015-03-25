@@ -342,6 +342,9 @@ WatchableObject.extend(Model, {
     }
 
     for (var key in target) {
+      if (target === this && (key in this.constructor.prototype || key.charCodeAt(0) === 95)) {
+        continue;
+      }
       data[key] = target[key];
     }
 
@@ -421,11 +424,11 @@ Model.createClass = Model.extend.bind(Model);
 module.exports = Model;
 
 },{"./watch-property":11,"fast-event-emitter":13,"watchable-object":17,"xtend/mutable":18}],7:[function(require,module,exports){
-module.exports = function(target, create, update) {
+module.exports = function(target, create, update, onSave) {
   if (target.uid) {
-    return update.call(target);
+    return update.call(target, onSave);
   } else {
-    return create.call(target);
+    return create.call(target, onSave);
   }
 };
 
@@ -435,15 +438,15 @@ var extend = require("xtend/mutable");
 
 module.exports = function(target, virtuals) {
 
-  if (target.virtuals) {
-    return extend(target.virtuals, virtuals);
+  if (target.__virtuals) {
+    return extend(target.__virtuals, virtuals);
   } else {
-    target.virtuals = virtuals;
+    target.__virtuals = virtuals;
   }
 
   target._emitter.on("missingProperty", function(property) {
-    if (!(property in target.virtuals)) return;
-    target.virtuals[property].call(target, function(err, value) {
+    if (!(property in target.__virtuals)) return;
+    target.__virtuals[property].call(target, function(err, value) {
       if (err) return target._emitter.emit("error", err);
 
       /* istanbul ignore else */

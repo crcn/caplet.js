@@ -1,7 +1,7 @@
 var Collection = require("./collection");
 
-module.exports = {
-    threads  : new Collection(require("../models/threads")),
-    messages : new Collection(require("../models/messages")),
-    users    : new Collection(require("../models/users"))
-};
+module.exports = function(collections) {
+
+}
+
+module.exports.Collection = Collection;

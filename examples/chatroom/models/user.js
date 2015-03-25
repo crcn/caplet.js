@@ -1,13 +1,18 @@
 var caplet = require("../../../");
-var db     = require("../database");
 
 module.exports = caplet.createModelClass({
 
+    /**
+     */
+
     virtuals: {
         messages: function(onLoad) {
-            db.messages.find({ userId: this.user.uid }, onLoad);
+            app.database.messages.find({ userId: this.uid }, onLoad);
         }
     },
+
+    /**
+     */
 
     initialize: function() {
         caplet.setVirtuals(this, this.virtuals);
