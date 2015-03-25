@@ -7,10 +7,26 @@ module.exports = caplet.createModelClass({
 
     virtuals: {
         messages: function(onLoad) {
-            db.messages.find({ threadId: this.thread.uid }, onLoad);
+            app.database.messages.find({ threadId: this.uid }, onLoad);
         },
+
+        // computed property from messages collection
         participants: function(onLoad) {
-            db.users.find({ threadId: this.thread.uid }, onLoad);
+            caplet.watchProperty(this, "messages", function(messages) {
+                
+                var participants = [];
+                var used         = {};
+
+                messages.forEach(function(message) {
+                    if (used[message.userId]) return;
+                    used[message.userId] = 1;
+                    participants.push({ uid: message.userId });
+                });
+
+                onLoad(void 0, app.models.Users({
+                    data: participants
+                }));
+            }).trigger();
         }
     },
 
@@ -24,10 +40,19 @@ module.exports = caplet.createModelClass({
     /**
      */
 
+    addMessage: function(properties, onSave) {
+        caplet.getAsync(this, "messages", function(err, messages) {
+            messages.create(properties).save(onSave);
+        }); 
+    },
+
+    /**
+     */
+
     onChange: function() {
-        this.set("unreadMessageCount", (this.messages || []).filter(function(message) {
+        var messages = this.messages || [];
+        this.set("unreadMessageCount", messages.filter(function(message) {
             return !message.read;
         }).length);
     }
-
 });

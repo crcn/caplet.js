@@ -23,7 +23,7 @@ var browserSync           = require("browser-sync");
 
 var paths = {
   testFiles : ["test/**/*-test.js", "./examples/**/*-test.js"],
-  appFiles  : ["lib/**/*.js", "examples/**/*.js"],
+  appFiles  : ["lib/**/*.js"],
   allFiles  : ["test/**", "lib/**", "examples/**"],
   lintFiles : ["test/**", "lib/**"],
   covFiles  : ["coverage/**/*"]
@@ -62,7 +62,6 @@ gulp.task("test-coverage", function (complete) {
  */
  
 gulp.task("test-coveralls", ["test-coverage"], function () {
-  console.log("COVDRALLE");
   return gulp.
   src("coverage/**/lcov.info").
   pipe(coveralls());

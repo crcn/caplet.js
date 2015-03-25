@@ -12,4 +12,15 @@ describe(__filename + "#", function() {
     model.set("a", 1);
   });
 
+  it("triggers a listener if watched value triggers a change", function() {
+    var a = new Model({ b: new Model() });
+    var i = 0;
+    Caplet.watchProperty(a, "b", function() {
+      i++;
+    }).trigger();
+
+    a.b.set("c", 1);
+    a.b.set("d", 1);
+    expect(i).to.be(3);
+  });
 });

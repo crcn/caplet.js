@@ -43,9 +43,7 @@ DBCollection.prototype.save = function(model, onSave) {
         this._items.push(model.toData());
     }
 
-    // store.set(this.name, this._items);
-
-    onSave(void 0, model);
+    if (onSave) onSave(void 0, model);
 }
 
 
