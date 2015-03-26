@@ -4,6 +4,7 @@ var models   = require("./models");
 var MainView = require("./views/main");
 var React    = require("react");
 var Database = require("./database");
+var ok       = require("okay");
 
 module.exports = caplet.createModelClass({
   models: models,
@@ -15,25 +16,28 @@ module.exports = caplet.createModelClass({
       users    : new Database.Collection("users", models.Users)
     };
 
+    this._loadFixtures();
+
+    this.set("allThreads", this.database.threads.all());
+    this.database.threads.findOne({ uid: "thread1" }, ok(this.set.bind(this, "currentThread")));
+  },
+  render: function(element) {
+      React.render(React.createElement(MainView), element);
+  },
+  _loadFixtures: function() {
     this.database.threads._items = [
       { uid: "thread1", name: "Test Thread" },
       { uid: "thread2", name: "Test Thread 2" }
     ];
 
-    this.set("allThreads", this.database.threads.all());
-
-    this.allThreads.watch(function() {
-      console.log("CHANGE");
-    });
-    
-    this.set("currentThread", this.database.threads.findOne({uid:"thread1"}));
-  },
-  render: function(element) {
-      React.render(React.createElement(MainView), element);
+    this.database.messages._items = [
+      { threadId: "thread1", uid: "message1", text: "test text" },
+      { threadId: "thread1", uid: "message2", text: "test text 2" }
+    ];
   }
 });
 
-},{"../..":24,"./database":3,"./models":5,"./views/main":16,"react":195}],2:[function(require,module,exports){
+},{"../..":24,"./database":3,"./models":5,"./views/main":16,"okay":37,"react":195}],2:[function(require,module,exports){
 (function (process){
 var sift  = require("sift");
 var store = process.browser ? require("store") : {
@@ -321,11 +325,9 @@ module.exports = React.createClass({displayName: "exports",
       }
     },
     render: function() {
-        return React.createElement("div", {className: "row content"}, 
-            React.createElement("div", {className: "col-sm-12"}, 
-                React.createElement(Messages, {messages: this.state.currentThread.get("value.messages")}), 
-                React.createElement(MessageBox, {messages: this.state.currentThread.get("value.messages")})
-            )
+        return React.createElement("div", {className: "row-fluid content"}, 
+            React.createElement(Messages, {messages: this.state.currentThread.get("value.messages")}), 
+            React.createElement(MessageBox, {messages: this.state.currentThread.get("value.messages")})
         );
     }
 });
@@ -349,9 +351,16 @@ var Message = require("./messages");
 var caplet  = require("../../../../..");
 
 module.exports = React.createClass({displayName: "exports",
+    handleKeyDown: function(event) {
+      if (event.keyCode !== 13) return;
+      var ref = this.refs.input.getDOMNode();
+      var text = ref.value;
+      this.props.messages.create({ text: text }).save();
+      ref.value = "";
+    },
     render: function() {
         return React.createElement("div", null, 
-          "box"
+          React.createElement("input", {ref: "input", placeholder: "Enter a message", onKeyDown: this.handleKeyDown, className: "form-control"})
         );
     }
 });
@@ -363,7 +372,7 @@ var caplet  = require("../../../../..");
 
 module.exports = React.createClass({displayName: "exports",
     render: function() {
-        return React.createElement("ul", null, 
+        return React.createElement("ul", {className: "messages"}, 
              (this.props.messages || []).map(function(message) {
                 return React.createElement(Message, {message: message});
             })

@@ -11,11 +11,9 @@ module.exports = React.createClass({
       }
     },
     render: function() {
-        return <div className="row content">
-            <div className="col-sm-12">
-                <Messages messages={this.state.currentThread.get("value.messages")} />
-                <MessageBox messages={this.state.currentThread.get("value.messages")} />
-            </div>
+        return <div className="row-fluid content">
+            <Messages messages={this.state.currentThread.get("value.messages")} />
+            <MessageBox messages={this.state.currentThread.get("value.messages")} />
         </div>;
     }
 });

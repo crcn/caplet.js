@@ -4,7 +4,7 @@ var caplet  = require("../../../../..");
 
 module.exports = React.createClass({
     render: function() {
-        return <ul>
+        return <ul className="messages">
             { (this.props.messages || []).map(function(message) {
                 return <Message message={message} />;
             })}
