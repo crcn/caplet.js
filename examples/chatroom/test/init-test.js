@@ -2,5 +2,5 @@
 var Application = require("../application");
 
 beforeEach(function() {
-  global.app = new Application();
+  global.app = new Application({ _loadFixtures: function(){} });
 });

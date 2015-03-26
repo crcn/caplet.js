@@ -681,15 +681,15 @@ module.exports = Collection;
 },{"./missing-property-mixin":26,"./model":27,"./watch-property":34,"fast-event-emitter":36,"watchable-collection":198,"xtend/mutable":201}],22:[function(require,module,exports){
 (function (process){
 
-
 module.exports = function(fn, timeout) {
   if (!process.browser) return fn;
   var timer;
   return function() {
     clearTimeout(timer);
     timer = setTimeout(fn, timeout);
-  }
-}
+  };
+};
+
 
 }).call(this,require('_process'))
 },{"_process":35}],23:[function(require,module,exports){
