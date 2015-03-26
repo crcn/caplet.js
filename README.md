@@ -25,7 +25,7 @@ Caplet can be a great companion to Flux. It also serves as a Flux alternative if
 
 - Scales. Concepts have been used in various apps consisting of ~30k LOC.
 - Simple. You just have models & collections. Nothing else to learn.
-- Familiar. Caplet isn't too inventive. If you're familiar with Symphony, Mongoose, or Ember, then Caplet shouldn't be tough to learn.
+- Familiar. Caplet isn't too inventive. If you're familiar with [Symfony](http://symfony.com/), [Mongoose](http://mongoosejs.com/), or [Ember](http://emberjs.com/), then Caplet shouldn't be tough to learn.
 - Obvious. It's easier to reconsile how your application should be structured if the only thing you have to deal with are `models` & `collections`. 
 - Encapsulated. Caplet was design to encourage you to focus how your models & collections relate to one other versus how they relate to other parts of your application - this includes views, and even the API. This allows you to:
  - Re-use your models for other applications - web/desktop/server-side.
