@@ -20,6 +20,11 @@ module.exports = caplet.createModelClass({
     ];
 
     this.set("allThreads", this.database.threads.all());
+
+    this.allThreads.watch(function() {
+      console.log("CHANGE");
+    });
+    
     this.set("currentThread", this.database.threads.findOne({uid:"thread1"}));
   },
   render: function(element) {
