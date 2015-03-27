@@ -56,9 +56,9 @@ describe(__filename + "#", function() {
     var ChildModel = Model.createClass({
       toData: function() {
         return {
-            firstName : this.firstName,
-            lastName  : this.lastName,
-            fullName  : this.firstName + " " + this.lastName
+          firstName : this.firstName,
+          lastName  : this.lastName,
+          fullName  : this.firstName + " " + this.lastName
         };
       }
     });

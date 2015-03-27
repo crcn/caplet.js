@@ -125,9 +125,9 @@ describe(__filename + "#", function() {
     var c = new Model();
 
     Caplet.setVirtuals(c, {
-        "name": function() {
-          return "abba";
-        }
+      "name": function() {
+        return "abba";
+      }
     });
 
     expect(c.get("name")).to.be("abba");
@@ -138,9 +138,9 @@ describe(__filename + "#", function() {
     var c = new Model();
 
     Caplet.setVirtuals(c, {
-        "read": function() {
-          return false;
-        }
+      "read": function() {
+        return false;
+      }
     });
 
     expect(c.get("read")).to.be(false);
@@ -151,9 +151,9 @@ describe(__filename + "#", function() {
     var c = new Model();
 
     Caplet.setVirtuals(c, {
-        "name": function() {
-          this.set("name", "abba");
-        }
+      "name": function() {
+        this.set("name", "abba");
+      }
     });
 
     expect(c.get("name")).to.be("abba");
