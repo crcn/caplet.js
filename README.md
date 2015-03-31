@@ -15,7 +15,7 @@ Caplet doesn't really implement new concepts. In fact, it's been inspired by a f
 Caplet doesn't make any assumptions about your code. It just gives organization to your model relationships in a sane way. It also gives you a relatively higher level of encapsulation for your data, while also encouraging you, but not forcefuly, to follow design patterns that scale quite well.
 
 Caplet has been an evolution of many libraries in the past, which have been used in a few pretty large applications (30k-ish loc). The first version came about sometime around 2013 as [mojo-models](https://github.com/mojo-js/mojo-models), and has since been further generalized for all intensive purposes.
- 
+
 The newer, hip version of Caplet has been designed for React, and pairs wells with the Hierarchial nature of React-based applications.
 
 Caplet can be a great companion to Flux. It also serves as a Flux alternative if you enjoy the good 'ol (and well proven when done right) MVC approach (Caplet (M) + React (VC)).
@@ -26,12 +26,12 @@ Caplet can be a great companion to Flux. It also serves as a Flux alternative if
 - Scales. Concepts have been used in various apps consisting of ~30k LOC.
 - Simple. You just have models & collections. Nothing else to learn.
 - Familiar. Caplet isn't too inventive. If you're familiar with [Symfony](http://symfony.com/), [Mongoose](http://mongoosejs.com/), or [Ember](http://emberjs.com/), then Caplet shouldn't be tough to learn.
-- Obvious. It's easier to reconsile how your application should be structured if the only thing you have to deal with are `models` & `collections`. 
+- Obvious. It's easier to reconsile how your application should be structured if the only thing you have to deal with are `models` & `collections`.
 - Encapsulated. Caplet was design to encourage you to focus how your models & collections relate to one other versus how they relate to other parts of your application - this includes views, and even the API. This allows you to:
  - Re-use your models for other applications - web/desktop/server-side.
  - Maintain your model structure even if the API changes.
  - Write your front-end in parallel with your API.
-- Lightweight. Caplet is small (11 KB minified). 
+- Lightweight. Caplet is small (11 KB minified).
 - Testable. Run 'em in the browser, in node, wherever you want.
 
 <!--
@@ -65,7 +65,12 @@ var TodoModel = Caplet.createModelClass({
  */
 
 var TodoCollection = Caplet.createCollectionClass({
-    modelClass: TodoModel
+    modelClass: TodoModel,
+    create: function(properties) {
+      var todo = this.createModel(properties);
+      this.push(todo);
+      return todo;
+    }
 });
 
 /**
@@ -76,7 +81,7 @@ var TodoComponent = React.createClass({
     render: function() {
         return <li><a href="#" onClick={this.props.todo.dispose.bind(this.props.todo)}>x</a> {this.props.todo.text}</li>
     }
-}); 
+});
 
 /**
  */
@@ -95,7 +100,7 @@ var TodosComponent = React.createClass({
             })}</ul>
         </div>
     }
-}); 
+});
 
 /**
  */
@@ -147,7 +152,7 @@ object as properties on the model.
 ```javascript
 
 var Address = Caplet.createModelClass({
-    // impl here   
+    // impl here
 });
 
 var Person = Caplet.createModelClass({
@@ -235,7 +240,7 @@ m.set("name", "Ryan"); // triggers watcher
 
 #### Model.dispose()
 
-disposes the model - also removes it from a collection if it's in one
+disposes the model - also removes it from a collection if it is in one
 
 #### Collection Caplet.createCollectionClass(properties)
 
@@ -249,8 +254,8 @@ creates a new collection class
 creates a new collection
 
 ```javascript
-var collection = new Collection(); 
-var collection = Collection();    
+var collection = new Collection();
+var collection = Collection();
 ```
 
 #### Collection.initialize()
@@ -296,25 +301,9 @@ console.log(people.at(0)); // [object Person]
 
 the source of the collection
 
-#### Collection.create(properties)
-
-creates a new model & adds to the collection
-
-```javascript
-var Person = Caplet.createModelClass();
-var People = Caplet.createCollectionClass({
-    modelClass: Person
-});
-
-var people = People();
-var person = people.create({ name: "Gordon" });
-
-console.log(people.length); // 1
-```
-
 #### Collection.onChange()
 
-override this if you want to listen for any changes on the collection 
+override this if you want to listen for any changes on the collection
 
 ```javascript
 var Todo = Caplet.createModelClass({
@@ -340,7 +329,7 @@ var Todos = Caplet.createCollectionClass({
 });
 
 var todos = Todos({
-    data: [ 
+    data: [
         { text: "wash car" },
         { text: "buy groceries", "complete": true }
     ]
@@ -438,5 +427,3 @@ var Person = Caplet.createModelClass({
 
 React mixin which automatically watches properties on a component & triggers a re-render
 if anything changes
-
-
