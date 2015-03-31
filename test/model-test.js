@@ -219,4 +219,14 @@ describe(__filename + "#", function() {
     expect(i).to.be(1);
     expect(c.name).to.be(void 0);
   });
+
+  it("emits dispose when disposed", function() {
+    var m = new Model();
+    var i = 0;
+    m.once("dispose", function() {
+      i++;
+    });
+    m.dispose();
+    expect(i).to.be(1);
+  });
 });

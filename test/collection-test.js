@@ -166,4 +166,15 @@ describe(__filename + "#", function() {
     c.at(0).set("data", 10);
     expect(sum).to.be(15);
   });
+
+
+  it("emits dispose when disposed", function() {
+    var m = new Collection();
+    var i = 0;
+    m.once("dispose", function() {
+      i++;
+    });
+    m.dispose();
+    expect(i).to.be(1);
+  });
 });
