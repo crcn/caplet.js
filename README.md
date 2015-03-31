@@ -49,6 +49,10 @@ npm install caplet
 
 - [React TODOMVC](https://github.com/crcn/react-caplet-todomvc)
 
+#### Adapters
+
+- [crudlet](https://github.com/crcn/crudlet.js) - streamable data store library
+
 #### Basic Example
 
 ```javascript
