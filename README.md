@@ -47,7 +47,8 @@ npm install caplet
 
 #### Examples
 
-- [React TODOMVC](https://github.com/crcn/react-caplet-todomvc)
+- [React TodoMVC](https://github.com/crcn/react-caplet-todomvc)
+- [Realtime Todos](https://github.com/mojo-js/crudlet.js/tree/master/examples/todos)
 
 #### Adapters
 
