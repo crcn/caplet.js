@@ -48,7 +48,6 @@ describe(__filename + "#", function() {
     expect(c.at(3)).to.be(m);
   });
 
-
   it("removes a model if it's been disposed of", function() {
     var c = new Collection({data:[1, 2, 3, 4]});
     expect(c.length).to.be(4);
@@ -166,7 +165,6 @@ describe(__filename + "#", function() {
     c.at(0).set("data", 10);
     expect(sum).to.be(15);
   });
-
 
   it("emits dispose when disposed", function() {
     var m = new Collection();

@@ -96,6 +96,28 @@ WatchableCollection.extend(Collection, {
 
   modelClass: Model,
 
+
+  /**
+   */
+
+  on: function() {
+    return this._emitter.on.apply(this._emitter, arguments);
+  },
+
+  /**
+   */
+
+  once: function() {
+    return this._emitter.once.apply(this._emitter, arguments);
+  },
+
+  /**
+   */
+
+  emit: function() {
+    return this._emitter.emit.apply(this._emitter, arguments);
+  },
+
   /**
    */
 
@@ -107,19 +129,6 @@ WatchableCollection.extend(Collection, {
 
   createModel: function(properties) {
     return new this.modelClass(properties);
-  },
-
-  /**
-   */
-
-  create: function(properties) {
-    var model = this.createModel(properties);
-
-    if (!properties.waitUntilSave) {
-      this.push(model);
-    }
-
-    return model;
   },
 
   /**
@@ -210,7 +219,7 @@ WatchableCollection.extend(Collection, {
 
     this.source.forEach(function(model) {
       self._modelListeners.push(model.watch(onChange));
-      self._modelListeners.push(model._emitter.once("dispose", function() {
+      self._modelListeners.push(model.once("dispose", function() {
         self.splice(self.indexOf(model), 1);
       }));
     });
@@ -225,6 +234,14 @@ WatchableCollection.extend(Collection, {
       this._modelListeners[i].dispose();
     }
     this._modelListeners = void 0;
+  },
+
+  /**
+   */
+
+  dispose: function() {
+    WatchableCollection.prototype.dispose.call(this);
+    this.emit("dispose");
   }
 });
 
@@ -259,15 +276,15 @@ module.exports = Collection;
 },{"./missing-property-mixin":7,"./model":8,"./watch-property":15,"fast-event-emitter":17,"watchable-collection":19,"xtend/mutable":22}],4:[function(require,module,exports){
 (function (process){
 
-
 module.exports = function(fn, timeout) {
   if (!process.browser) return fn;
   var timer;
   return function() {
     clearTimeout(timer);
     timer = setTimeout(fn, timeout);
-  }
-}
+  };
+};
+
 }).call(this,require('_process'))
 },{"_process":16}],5:[function(require,module,exports){
 var watchProperty = require("./watch-property");
@@ -303,7 +320,7 @@ module.exports = {
     var missingProperty = (typeof keypath === "string" ? keypath.split(".") : keypath)[0];
     if (!this._missingProperties) this._missingProperties = {};
     if (this._missingProperties[missingProperty]) return;
-    this._emitter.emit("missingProperty", this._missingProperties[missingProperty] = missingProperty);
+    this.emit("missingProperty", this._missingProperties[missingProperty] = missingProperty);
     if (this[missingProperty] != void 0) return this.get(keypath);
   }
 };
@@ -355,8 +372,28 @@ WatchableObject.extend(Model, {
   /**
    */
 
-  initialize: function() {
+  on: function() {
+    return this._emitter.on.apply(this._emitter, arguments);
   },
+
+  /**
+   */
+
+  once: function() {
+    return this._emitter.once.apply(this._emitter, arguments);
+  },
+
+  /**
+   */
+
+  emit: function() {
+    return this._emitter.emit.apply(this._emitter, arguments);
+  },
+
+  /**
+   */
+
+  initialize: function() { },
 
   /**
    * deserialize data from the this.data
@@ -420,7 +457,7 @@ WatchableObject.extend(Model, {
 
   dispose: function() {
     WatchableObject.prototype.dispose.call(this);
-    this._emitter.emit("dispose");
+    this.emit("dispose");
   }
 });
 
@@ -505,14 +542,14 @@ module.exports = function(target, virtuals) {
     };
   }
 
-  target._emitter.on("missingProperty", function(property) {
+  target.on("missingProperty", function(property) {
 
     var virtual = getVirtual(property);
 
     if (!virtual) return;
 
     function onLoad(err, value) {
-      if (err) return target._emitter.emit("error", err);
+      if (err) return target.emit("error", err);
 
       /* istanbul ignore else */
       if (!process.browser) {
@@ -534,7 +571,7 @@ module.exports = function(target, virtuals) {
 module.exports = function(target, property, load, onLoad) {
   if (!target._singletons) target._singletons = {};
   var event = "singleton:" + property;
-  target._emitter.once(event, onLoad || function() { });
+  target.once(event, onLoad || function() { });
   var singleton = target._singletons[property];
   if (singleton != void 0) return singleton;
 
@@ -545,7 +582,7 @@ module.exports = function(target, property, load, onLoad) {
   };
 
   load.call(target, function(err, value) {
-    target._emitter.emit.apply(target._emitter, [event, err, value]);
+    target.emit.apply(target, [event, err, value]);
   });
 
   return singleton;
