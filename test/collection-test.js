@@ -48,18 +48,6 @@ describe(__filename + "#", function() {
     expect(c.at(3)).to.be(m);
   });
 
-  it("can properly create a collection", function() {
-    var c = new Collection();
-    c.create(1);
-    expect(c.length).to.be(1);
-  });
-
-  it("can wait to push model until the created model is saved", function() {
-    var c = new Collection();
-    var m = c.create({waitUntilSave:true});
-    expect(c.length).to.be(0);
-    // TODO - check for save
-  });
 
   it("removes a model if it's been disposed of", function() {
     var c = new Collection({data:[1, 2, 3, 4]});
@@ -71,7 +59,8 @@ describe(__filename + "#", function() {
   it("watches a newly created model", function() {
     var c = new Collection({data:[1, 2, 3]});
     expect(c.length).to.be(3);
-    var m = c.create(4);
+    var m = c.createModel(4);
+    c.push(m);
     expect(c.length).to.be(4);
     m.dispose();
     expect(c.length).to.be(3);
@@ -120,7 +109,7 @@ describe(__filename + "#", function() {
     var i = 0;
     var ChildCollection = Collection.extend({ onChange: function() { i++; }});
     var c = new ChildCollection();
-    c.create(1);
+    c.push(c.createModel(1));
     expect(i).to.be(1);
   });
 

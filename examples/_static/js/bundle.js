@@ -340,7 +340,7 @@ var caplet  = require("../../../../..");
 module.exports = React.createClass({displayName: "exports",
     render: function() {
         return React.createElement("li", null, 
-           this.props.message.text
+           this.props.message.text, " ", React.createElement("a", {href: "#", onClick: this.props.message.dispose.bind(this.props.message)}, "x")
         );
     }
 });
