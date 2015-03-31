@@ -64,7 +64,6 @@ function Collection(sourceOrProperties) {
   }
 
   if (this.getInitialProperties) properties = extend({}, this.getInitialProperties(), properties);
-  this._emitter      = new FastEventEmitter();
 
   WatchableCollection.call(this);
   this.setProperties(properties);
@@ -95,28 +94,6 @@ WatchableCollection.extend(Collection, {
    */
 
   modelClass: Model,
-
-
-  /**
-   */
-
-  on: function() {
-    return this._emitter.on.apply(this._emitter, arguments);
-  },
-
-  /**
-   */
-
-  once: function() {
-    return this._emitter.once.apply(this._emitter, arguments);
-  },
-
-  /**
-   */
-
-  emit: function() {
-    return this._emitter.emit.apply(this._emitter, arguments);
-  },
 
   /**
    */
@@ -351,8 +328,6 @@ function Model(properties) {
 
   WatchableObject.call(this, properties);
 
-  this._emitter = new FastEventEmitter();
-
   var self = this;
 
   watchProperty(this, "data", this.onDataChange).trigger();
@@ -368,27 +343,6 @@ function Model(properties) {
  */
 
 WatchableObject.extend(Model, {
-
-  /**
-   */
-
-  on: function() {
-    return this._emitter.on.apply(this._emitter, arguments);
-  },
-
-  /**
-   */
-
-  once: function() {
-    return this._emitter.once.apply(this._emitter, arguments);
-  },
-
-  /**
-   */
-
-  emit: function() {
-    return this._emitter.emit.apply(this._emitter, arguments);
-  },
 
   /**
    */
@@ -1131,9 +1085,7 @@ WatchableObject.extend(WatchableCollection, {
     _onChange: function() {
 
         // trigger change
-        if (!this.set("length", this.source.length)) {
-            this._triggerChange();
-        }
+        if (!this.set("length", this.source.length)) this._triggerChange();
     }
 });
 
@@ -1164,12 +1116,14 @@ module.exports = function(target, property, listener) {
     return watcher;
 }
 },{}],21:[function(require,module,exports){
-var protoclass = require("protoclass");
+var protoclass       = require("protoclass");
+var FastEventEmitter = require("fast-event-emitter");
 
 /**
  */
 
 function WatchableObject(properties) {
+  FastEventEmitter.call(this);
   this.__watchable = {};
   if (properties) {
     for (var key in properties) {
@@ -1181,35 +1135,13 @@ function WatchableObject(properties) {
 /**
  */
 
-protoclass(WatchableObject, {
+protoclass(FastEventEmitter, WatchableObject, {
 
   /**
    */
 
   watch: function(listener) {
-
-    if (!this._listeners) {
-      this._listeners = listener;
-    } else if (typeof this._listeners === "function") {
-      this._listeners = [this._listeners, listener];
-    } else {
-      this._listeners.push(listener);
-    }
-
-    var self = this;
-
-    return {
-      dispose: function() {
-        var i = 0;
-        if (!self._listeners) return;
-        if (typeof self._listeners !== "function" && ~(i = self._listeners.indexOf(listener))) {
-          self._listeners.splice(i, 1);
-          if (self._listeners.length === 0) self._listeners = void 0;
-        } else {
-          self._listeners = void 0;
-        }
-      }
-    };
+    return this.on("change", listener);
   },
 
   /**
@@ -1315,6 +1247,7 @@ protoclass(WatchableObject, {
       hasChanged = this.set(key, properties[key], false) || hasChanged;
     }
     if (hasChanged) this._triggerChange();
+    return hasChanged;
   },
 
   /**
@@ -1322,20 +1255,9 @@ protoclass(WatchableObject, {
 
   _triggerChange: function(defer) {
     this._changing = true;
-
-    var self = this;
-    if (self._listeners) {
-      if (typeof self._listeners === "function") {
-        self._listeners();
-      } else {
-        for (var i = self._listeners.length; i--;) {
-          self._listeners[i]();
-        }
-      }
-    }
-    self._changing = false;
+    this.emit("change");
+    this._changing = false;
   },
-
 
   /**
    */
@@ -1346,12 +1268,13 @@ protoclass(WatchableObject, {
     }
     this.__watchable = {};
     this._listeners  = void 0;
+    this.removeAllListeners("change");
   }
 });
 
 module.exports = WatchableObject;
 
-},{"protoclass":18}],22:[function(require,module,exports){
+},{"fast-event-emitter":17,"protoclass":18}],22:[function(require,module,exports){
 module.exports = extend
 
 function extend(target) {

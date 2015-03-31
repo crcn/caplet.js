@@ -95,7 +95,7 @@ describe(__filename + "#", function() {
 
     var error;
 
-    c._emitter.on("error", function(err) {
+    c.on("error", function(err) {
       error = err;
     });
 

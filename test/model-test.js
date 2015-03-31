@@ -111,7 +111,7 @@ describe(__filename + "#", function() {
 
   it("emits a 'missingProperty' event when a property is missing", function(next) {
     var model = new Model();
-    model._emitter.on("missingProperty", function(keypath) {
+    model.on("missingProperty", function(keypath) {
       expect(keypath).to.be("a");
       next();
     });
@@ -121,7 +121,7 @@ describe(__filename + "#", function() {
   it("doesn't emit 'missingProperty' twice", function() {
     var model = new Model();
     var i = 0;
-    model._emitter.on("missingProperty", function(keypath) {
+    model.on("missingProperty", function(keypath) {
       i++;
     });
 
@@ -132,7 +132,7 @@ describe(__filename + "#", function() {
 
   it("returns the missing property if set when 'missingProperty' is omitted", function() {
     var model = new Model();
-    model._emitter.on("missingProperty", function(property) {
+    model.on("missingProperty", function(property) {
       model.set(property, {b:{c:{d:1}}});
     });
 
@@ -141,7 +141,7 @@ describe(__filename + "#", function() {
 
   it("returns void if missing property is set but the keypath is undefined", function() {
     var model = new Model();
-    model._emitter.on("missingProperty", function(property) {
+    model.on("missingProperty", function(property) {
       model.set(property, 1);
     });
 
