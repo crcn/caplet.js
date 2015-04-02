@@ -52,7 +52,11 @@ npm install caplet
 
 #### Adapters
 
-- [crudlet](https://github.com/crcn/crudlet.js) - streamable data store library
+- [crudlet](https://github.com/mojo-js/crudlet.js) - streamable data store library
+    - [socket.io](https://github.com/mojo-js/crudlet-socket.io) - realtime data
+    - [http](https://github.com/mojo-js/crudlet-http) - HTTP (API) adapter
+    - [local storage](https://github.com/mojo-js/crudlet-local-storage) local storage db
+    - [loki](https://github.com/mojo-js/crudlet-loki) - [loki](http://lokijs.org/) in-memory db
 
 #### Basic Example
 
