@@ -235,4 +235,11 @@ describe(__filename + "#", function() {
     m.set("a", 2);
     expect(m.toData().a).to.be(2);
   });
+
+  it("serializes new properties", function() {
+    var m = new Model({ data: { a: 1 }});
+    m.set("b", 2);
+    expect(m.toData().a).to.be(1);
+    expect(m.toData().b).to.be(2);
+  });
 });

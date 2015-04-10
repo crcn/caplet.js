@@ -400,6 +400,11 @@ WatchableObject.extend(Model, {
   /**
    */
 
+  data: void 0,
+
+  /**
+   */
+
   initialize: function() { },
 
   /**
@@ -421,7 +426,7 @@ WatchableObject.extend(Model, {
       return this.data;
     }
 
-    var keys   = Object.keys(this.data ? this.data : this);
+    var keys   = Object.keys(this);
 
     for (var i = 0, n = keys.length; i < n; i++) {
       var key = keys[i];
