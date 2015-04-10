@@ -3,11 +3,11 @@ var watchProperty = require("../lib/watch-property");
 var expect     = require("expect.js");
 
 describe(__filename + "#", function() {
+
   it("can create a new collection class", function() {
     var ChildCollection = Collection.createClass({});
     expect(new ChildCollection() instanceof Collection).to.be(true);
   });
-
 
   it("it has a __isCollection flag", function() {
     var ChildCollection = Collection.createClass({});
