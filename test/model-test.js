@@ -229,4 +229,10 @@ describe(__filename + "#", function() {
     m.dispose();
     expect(i).to.be(1);
   });
+
+  it("properly serializes new values on the model", function() {
+    var m = new Model({ data: { a: 1 }});
+    m.set("a", 2);
+    expect(m.toData().a).to.be(2);
+  });
 });
