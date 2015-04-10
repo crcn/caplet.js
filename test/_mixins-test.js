@@ -42,4 +42,19 @@ describe(__filename + "#", function() {
 
     expect(i).to.be(3);
   });
+
+  it("merges the returned values from all mixins", function() {
+
+
+    var proto = _mixin([
+      { a: function() { return { a: 1 }; } },
+      { a: function() { return { b: 1 }; } },
+      { a: function() { return { c: 1 }; } }
+    ]);
+
+    var ret = proto.a();
+    expect(ret.a).to.be(1);
+    expect(ret.b).to.be(1);
+    expect(ret.c).to.be(1);
+  });
 });

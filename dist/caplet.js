@@ -61,8 +61,7 @@ module.exports = function(mixins) {
 
 function combineFunction(oldFn, newFn) {
   return function() {
-    oldFn.apply(this, arguments);
-    newFn.apply(this, arguments);
+    return extend(oldFn.apply(this, arguments) || {}, newFn.apply(this, arguments) || {});
   };
 }
 
