@@ -8,6 +8,12 @@ describe(__filename + "#", function() {
     expect(new ChildCollection() instanceof Collection).to.be(true);
   });
 
+
+  it("it has a __isCollection flag", function() {
+    var ChildCollection = Collection.createClass({});
+    expect(ChildCollection().__isCollection).to.be(true);
+  });
+
   it("can create a new collection class without the new keyword", function() {
     var ChildCollection = Collection.createClass({});
     expect(ChildCollection() instanceof Collection).to.be(true);

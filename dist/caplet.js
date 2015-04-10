@@ -45,7 +45,6 @@ module.exports = function(fromTarget, fromProperty, toTarget, toProperty) {
 
 },{"./watch-property":15}],3:[function(require,module,exports){
 var WatchableCollection  = require("watchable-collection");
-var FastEventEmitter     = require("fast-event-emitter");
 var watchProperty        = require("./watch-property");
 var Model                = require("./model").createClass();
 var extend               = require("xtend/mutable");
@@ -93,13 +92,17 @@ WatchableCollection.extend(Collection, {
   /**
    */
 
+  __isCollection: true,
+
+  /**
+   */
+
   modelClass: Model,
 
   /**
    */
 
-  initialize: function() {
-  },
+  initialize: function() { },
 
   /**
    */
@@ -250,7 +253,7 @@ Collection.createClass = Collection.extend.bind(Collection);
 
 module.exports = Collection;
 
-},{"./missing-property-mixin":7,"./model":8,"./watch-property":15,"fast-event-emitter":17,"watchable-collection":19,"xtend/mutable":22}],4:[function(require,module,exports){
+},{"./missing-property-mixin":7,"./model":8,"./watch-property":15,"watchable-collection":19,"xtend/mutable":22}],4:[function(require,module,exports){
 (function (process){
 
 module.exports = function(fn, timeout) {
@@ -304,7 +307,6 @@ module.exports = {
 
 },{"watchable-object":21}],8:[function(require,module,exports){
 var WatchableObject  = require("watchable-object");
-var FastEventEmitter = require("fast-event-emitter");
 var watchProperty    = require("./watch-property");
 var extend           = require("xtend/mutable");
 var missingPropertyMixin = require("./missing-property-mixin");
@@ -444,7 +446,7 @@ Model.createClass = Model.extend.bind(Model);
 
 module.exports = Model;
 
-},{"./missing-property-mixin":7,"./watch-property":15,"fast-event-emitter":17,"watchable-object":21,"xtend/mutable":22}],9:[function(require,module,exports){
+},{"./missing-property-mixin":7,"./watch-property":15,"watchable-object":21,"xtend/mutable":22}],9:[function(require,module,exports){
 module.exports = function(value, clazz, properties) {
 
   if (value instanceof clazz) {
@@ -604,7 +606,7 @@ module.exports = {
       var value = dict[key];
 
       /* istanbul ignore else */
-      if (value && value.watch) {
+      if (value && value.__isWatchableObject) {
         this._watchers.push(dict[key].watch(forceUpdate));
       }
     }
@@ -650,7 +652,7 @@ PropertyWatcher.prototype.trigger = function(force) {
 
   if (this._valueWatcher) this._valueWatcher.dispose();
 
-  if (currentValue && currentValue.watch) {
+  if (currentValue && currentValue.__isWatchableObject) {
     var self = this;
     this._valueWatcher = currentValue.watch(function() {
       self.trigger(true);
@@ -1140,6 +1142,11 @@ protoclass(FastEventEmitter, WatchableObject, {
   /**
    */
 
+  __isWatchableObject: true,
+
+  /**
+   */
+
   watch: function(listener) {
     return this.on("change", listener);
   },
@@ -1215,7 +1222,7 @@ protoclass(FastEventEmitter, WatchableObject, {
 
     if (value === this) return;
 
-    if (!value || !value.watch) {
+    if (!value || !value.__isWatchableObject) {
       if (this.__watchable[property]) this.__watchable[property].dispose();
       this.__watchable[property] = void 0;
       var tov = Object.prototype.toString.call(value);
