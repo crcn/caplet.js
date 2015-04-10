@@ -181,4 +181,15 @@ describe(__filename + "#", function() {
     m.dispose();
     expect(i).to.be(1);
   });
+
+  it("can specify model properties", function() {
+    var ChildCollection = Collection.createClass({
+      getModelProperties: function() {
+        return { a: 1 };
+      }
+    });
+
+    var c = ChildCollection();
+    expect(c.createModel().a).to.be(1);
+  })
 });

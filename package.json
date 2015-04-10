@@ -1,6 +1,6 @@
 {
   "name": "caplet",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "description": "Models library for JavaScript",
   "main": "./lib/index.js",
   "keywords": [
