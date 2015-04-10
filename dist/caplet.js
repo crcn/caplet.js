@@ -150,14 +150,9 @@ WatchableCollection.extend(Collection, {
    */
 
   createModel: function(properties) {
-    return new this.modelClass(extend(this.getModelProperties(), properties));
-  },
-
-  /**
-   */
-
-  getModelProperties: function() {
-    return { };
+    var model = new this.modelClass(properties);
+    this.onCreateModel(model);
+    return model;
   },
 
   /**
@@ -194,6 +189,13 @@ WatchableCollection.extend(Collection, {
     var properties = this.fromData(data);
     properties.source = this.mergeSource(properties.source);
     this.setProperties(properties);
+  },
+
+  /**
+   */
+
+  onCreateModel: function(model) {
+    // do stuff
   },
 
   /**

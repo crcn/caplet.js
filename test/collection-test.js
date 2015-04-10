@@ -182,7 +182,7 @@ describe(__filename + "#", function() {
     expect(i).to.be(1);
   });
 
-  it("can specify model properties", function() {
+  xit("can specify model properties", function() {
     var ChildCollection = Collection.createClass({
       getModelProperties: function() {
         return { a: 1 };
