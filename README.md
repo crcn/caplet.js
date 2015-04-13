@@ -20,13 +20,12 @@ The newer, hip version of Caplet has been designed for React, and pairs wells wi
 
 Caplet can be a great companion to Flux. It also serves as a Flux alternative if you enjoy the good 'ol (and well proven when done right) MVC approach (Caplet (M) + React (VC)).
 
-
 #### Why?
 
 - Scales. Concepts have been used in various apps consisting of ~30k LOC.
 - Simple. You just have models & collections. Nothing else to learn.
 - Familiar. Caplet isn't too inventive. If you're familiar with [Symfony](http://symfony.com/), [Mongoose](http://mongoosejs.com/), or [Ember](http://emberjs.com/), then Caplet shouldn't be tough to learn.
-- Obvious. It's easier to reconsile how your application should be structured if the only thing you have to deal with are `models` & `collections`.
+- Obvious. It's easier to reconcile how your application should be structured if the only thing you have to deal with are `models` & `collections`.
 - Encapsulated. Caplet was design to encourage you to focus how your models & collections relate to one other versus how they relate to other parts of your application - this includes views, and even the API. This allows you to:
  - Re-use your models for other applications - web/desktop/server-side.
  - Maintain your model structure even if the API changes.
@@ -50,13 +49,15 @@ npm install caplet
 - [React TodoMVC](https://github.com/crcn/react-caplet-todomvc)
 - [Realtime Todos](https://github.com/mojo-js/crudlet.js/tree/master/examples/todos)
 
-#### Adapters
+#### Extensions
 
-- [crudlet](https://github.com/mojo-js/crudlet.js) - streamable data store library
-    - [socket.io](https://github.com/mojo-js/crudlet-socket.io) - realtime data
-    - [http](https://github.com/mojo-js/crudlet-http) - HTTP (API) adapter
-    - [local storage](https://github.com/mojo-js/crudlet-local-storage) local storage db
-    - [loki](https://github.com/mojo-js/crudlet-loki) - [loki](http://lokijs.org/) in-memory db
+- [meshlet](https://github.com/mojo-js/mesh.js) - mesh + caplet mixin
+- [mesh](https://github.com/mojo-js/mesh.js) - streamable data store library
+    - [socket.io](https://github.com/mojo-js/mesh-socket.io) - realtime data
+    - [http](https://github.com/mojo-js/mesh-http) - HTTP (API) adapter
+    - [local storage](https://github.com/mojo-js/mesh-local-storage) local storage db
+    - [loki](https://github.com/mojo-js/mesh-loki) - [loki](http://lokijs.org/) in-memory db
+
 
 #### Basic Example
 
