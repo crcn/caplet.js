@@ -191,5 +191,5 @@ describe(__filename + "#", function() {
 
     var c = ChildCollection();
     expect(c.createModel().a).to.be(1);
-  })
+  });
 });

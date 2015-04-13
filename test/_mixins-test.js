@@ -45,7 +45,6 @@ describe(__filename + "#", function() {
 
   it("merges the returned values from all mixins", function() {
 
-
     var proto = _mixin([
       { a: function() { return { a: 1 }; } },
       { a: function() { return { b: 1 }; } },
