@@ -65,7 +65,7 @@ function combineFunction(oldFn, newFn) {
   };
 }
 
-},{"xtend/mutable":23}],3:[function(require,module,exports){
+},{"xtend/mutable":24}],3:[function(require,module,exports){
 var watchProperty = require("./watch-property");
 
 module.exports = function(fromTarget, fromProperty, toTarget, toProperty) {
@@ -95,6 +95,7 @@ var _mixin               = require("./_mixin");
 function Collection(sourceOrProperties) {
 
   var properties = {};
+  var source;
 
   if (!sourceOrProperties) sourceOrProperties = {};
 
@@ -106,26 +107,23 @@ function Collection(sourceOrProperties) {
 
   if (this.getInitialProperties) properties = extend({}, this.getInitialProperties(), properties);
 
+
   WatchableCollection.call(this);
+
   this.setProperties(properties);
+
 
   this.createModel   = this.createModel.bind(this);
 
   var self = this;
 
-  watchProperty(this, "data", this.onDataChange).trigger();
-
-  this.watch(function() {
-    self._watchModels();
-  });
+  watchProperty(this, "data", this.onDataChange, true).trigger();
 
   this.initialize();
 
   if (this.onChange) this.watch(function() {
     self.onChange();
   });
-
-  this._watchModels();
 
 }
 
@@ -241,6 +239,7 @@ WatchableCollection.extend(Collection, {
    */
 
   _watchModels: function() {
+    WatchableCollection.prototype._watchModels.call(this);
     this._unwatchModels();
     this._modelListeners = [];
     var self = this;
@@ -249,7 +248,6 @@ WatchableCollection.extend(Collection, {
     };
 
     this.source.forEach(function(model) {
-      self._modelListeners.push(model.watch(onChange));
       self._modelListeners.push(model.once("dispose", function() {
         self.splice(self.indexOf(model), 1);
       }));
@@ -303,7 +301,7 @@ Collection.createClass = Collection.extend.bind(Collection);
 
 module.exports = Collection;
 
-},{"./_mixin":2,"./missing-property-mixin":8,"./model":9,"./watch-property":16,"watchable-collection":20,"xtend/mutable":23}],5:[function(require,module,exports){
+},{"./_mixin":2,"./missing-property-mixin":8,"./model":9,"./watch-property":16,"watchable-collection":20,"xtend/mutable":24}],5:[function(require,module,exports){
 (function (process){
 
 module.exports = function(fn, timeout) {
@@ -383,7 +381,7 @@ function Model(properties) {
 
   var self = this;
 
-  watchProperty(this, "data", this.onDataChange).trigger();
+  watchProperty(this, "data", this.onDataChange, true).trigger();
 
   this.initialize();
 
@@ -507,7 +505,7 @@ Model.createClass = Model.extend.bind(Model);
 
 module.exports = Model;
 
-},{"./_mixin":2,"./missing-property-mixin":8,"./watch-property":16,"watchable-object":22,"xtend/mutable":23}],10:[function(require,module,exports){
+},{"./_mixin":2,"./missing-property-mixin":8,"./watch-property":16,"watchable-object":22,"xtend/mutable":24}],10:[function(require,module,exports){
 module.exports = function(value, clazz, properties) {
 
   if (value instanceof clazz) {
@@ -584,7 +582,7 @@ module.exports = function(target, virtuals) {
 };
 
 }).call(this,require('_process'))
-},{"_process":17,"xtend/mutable":23}],14:[function(require,module,exports){
+},{"_process":17,"xtend/mutable":24}],14:[function(require,module,exports){
 module.exports = function(target, property, load, onLoad) {
   if (!target._singletons) target._singletons = {};
   var event = "singleton:" + property;
@@ -662,7 +660,7 @@ module.exports = {
    */
 
   _watchDict: function(dict) {
-    var forceUpdate = debounce(this.forceUpdate.bind(this), 10);
+    var forceUpdate = debounce(this.forceUpdate.bind(this, null), 10);
     for (var key in dict) {
       var value = dict[key];
 
@@ -690,13 +688,14 @@ module.exports = {
 /**
  */
 
-function PropertyWatcher (target, property, listener) {
+function PropertyWatcher (target, property, listener, immediate) {
   this.target   = target;
   this.listener = listener;
   this.property = property;
+  this.immediate = !!immediate; // secret flag for internal use only!
   this.oldValue = void 0;
   var self = this;
-  this._disposable = this.target.watch(function() {
+  this._disposable = this._watch(this.target, function() {
     self.trigger();
   });
 }
@@ -715,7 +714,7 @@ PropertyWatcher.prototype.trigger = function(force) {
 
   if (currentValue && currentValue.__isWatchableObject) {
     var self = this;
-    this._valueWatcher = currentValue.watch(function() {
+    this._valueWatcher = this._watch(currentValue, function() {
       self.trigger(true);
     });
   }
@@ -724,6 +723,17 @@ PropertyWatcher.prototype.trigger = function(force) {
   this.listener.call(this.target, currentValue, this.oldValue);
 
   return this;
+};
+
+/**
+ */
+
+PropertyWatcher.prototype._watch = function(target, listener) {
+  if (this.immediate) {
+    return target.on("willChange", listener);
+  } else {
+    return target.watch(listener);
+  }
 };
 
 /**
@@ -738,8 +748,8 @@ PropertyWatcher.prototype.dispose = function() {
 /**
  */
 
-module.exports = function(target, property, listener) {
-  return new PropertyWatcher(target, property, listener);
+module.exports = function(target, property, listener, immediate) {
+  return new PropertyWatcher(target, property, listener, immediate);
 };
 
 },{}],17:[function(require,module,exports){
@@ -1046,6 +1056,7 @@ module.exports = protoclass;
 },{}],20:[function(require,module,exports){
 var WatchableObject = require("watchable-object");
 var watchProperty   = require("./watchProperty");
+var runloop         = require("watchable-object/lib/runloop").instance;
 
 function WatchableCollection(source) {
     WatchableObject.call(this);
@@ -1148,12 +1159,40 @@ WatchableObject.extend(WatchableCollection, {
     _onChange: function() {
 
         // trigger change
-        if (!this.set("length", this.source.length)) this._triggerChange();
+        if (!this.set("length", this.source.length)) {
+          this._triggerChange(this);
+        }
+
+        // if (this._rl) return this._rl.reDefer();
+        // this._rl = runloop.defer(this._watchModels.bind(this));
+        this._watchModels();
+    },
+
+    /**
+     */
+
+    _watchModels: function() {
+      if (this._modelWatchers) {
+        for (var i = this._modelWatchers.length; i--;) this._modelWatchers[i].dispose();
+      }
+
+      var onChange = function() {
+        this._triggerChange(this);
+      }.bind(this);
+
+      this._modelWatchers = [];
+      for (var i = this.source.length; i--;) {
+        var model = this.at(0);
+        if (model && model.__isWatchableObject) {
+          this._modelWatchers.push(model.on("willChange", onChange));
+        }
+      }
     }
 });
 
 module.exports = WatchableCollection;
-},{"./watchProperty":21,"watchable-object":22}],21:[function(require,module,exports){
+
+},{"./watchProperty":21,"watchable-object":22,"watchable-object/lib/runloop":23}],21:[function(require,module,exports){
 
 
 module.exports = function(target, property, listener) {
@@ -1174,13 +1213,16 @@ module.exports = function(target, property, listener) {
         }
     };
 
-    disposable = target.watch(watcher.trigger);
+    disposable = target.on("willChange", watcher.trigger);
 
     return watcher;
 }
+
 },{}],22:[function(require,module,exports){
 var protoclass       = require("protoclass");
 var FastEventEmitter = require("fast-event-emitter");
+
+var runloop = require("./runloop").instance;
 
 /**
  */
@@ -1188,6 +1230,7 @@ var FastEventEmitter = require("fast-event-emitter");
 function WatchableObject(properties) {
   FastEventEmitter.call(this);
   this.__watchable = {};
+  this.__onChange = this.__onChange.bind(this);
   if (properties) {
     for (var key in properties) {
       this._watchProperty(key, this[key] = properties[key]);
@@ -1208,8 +1251,32 @@ protoclass(FastEventEmitter, WatchableObject, {
   /**
    */
 
+  _changeId: 0,
+
+  /**
+   */
+
   watch: function(listener) {
-    return this.on("change", listener);
+    var watcher;
+    var self = this;
+
+    var disposable = {
+      disposed: false,
+      dispose: function() {
+        disposable.disposed = true;
+        if (watcher) watcher.dispose();
+      }
+    };
+
+    function watchNow() {
+      if (!disposable.disposed) {
+        watcher = self.on("change", listener);
+      }
+    }
+
+    runloop.defer(watchNow);
+
+    return disposable;
   },
 
   /**
@@ -1272,7 +1339,7 @@ protoclass(FastEventEmitter, WatchableObject, {
     cv[keypath[i]] = value;
 
     this._watchProperty(property, value);
-    if (trigger !== false && hasChanged) this._triggerChange();
+    if (trigger !== false && hasChanged) this._triggerChange(this);
     return hasChanged;
   },
 
@@ -1297,12 +1364,12 @@ protoclass(FastEventEmitter, WatchableObject, {
 
     var self = this;
 
-    this.__watchable[property] = value.watch(function() {
+    this.__watchable[property] = value.on("willChange", function(target) {
       if (!self.get(property)) {
         return self._watchProperty(property, void 0);
       }
-      if (self._changing) return;
-      self._triggerChange();
+
+      if (target !== self) self._triggerChange(target);
     });
   },
 
@@ -1314,17 +1381,34 @@ protoclass(FastEventEmitter, WatchableObject, {
     for (var key in properties) {
       hasChanged = this.set(key, properties[key], false) || hasChanged;
     }
-    if (hasChanged) this._triggerChange();
+    if (hasChanged) this._triggerChange(this);
     return hasChanged;
   },
 
   /**
    */
 
-  _triggerChange: function(defer) {
-    this._changing = true;
-    this.emit("change");
-    this._changing = false;
+  _triggerChange: function(changedTarget) {
+
+    if (!this._changeDefer || changedTarget === this) {
+      this.emit("willChange", changedTarget);
+    }
+
+    // push change onto the end
+    if (this._changeDefer) {
+      if (this._changeDefer.reDefer()) return;
+    }
+
+    this._changeDefer = runloop.defer(this.__onChange);
+  },
+
+  /**
+   */
+
+  __onChange: function() {
+    // remove change defer
+    this._changeDefer = void 0;
+    this.emit("change", this);
   },
 
   /**
@@ -1337,12 +1421,132 @@ protoclass(FastEventEmitter, WatchableObject, {
     this.__watchable = {};
     this._listeners  = void 0;
     this.removeAllListeners("change");
+    this.removeAllListeners("willChange");
   }
 });
 
 module.exports = WatchableObject;
 
-},{"fast-event-emitter":18,"protoclass":19}],23:[function(require,module,exports){
+},{"./runloop":23,"fast-event-emitter":18,"protoclass":19}],23:[function(require,module,exports){
+(function (process,global){
+var protoclass = require("protoclass");
+var FastEventEmitter = require("fast-event-emitter");
+
+var rAF = (global.requestAnimationFrame      ||
+          global.webkitRequestAnimationFrame ||
+          global.mozRequestAnimationFrame    ||
+          process.nextTick).bind(global);
+
+
+var defaultTick = function(next) {
+  rAF(next);
+};
+
+/**
+ */
+
+function RunLoop(options) {
+  FastEventEmitter.call(this);
+  this._animationQueue = [];
+  this.tick = options.tick || defaultTick;
+  this._id = options._id || 2;
+}
+
+protoclass(FastEventEmitter, RunLoop, {
+
+  /**
+   * child runloop in-case we get into recursive loops
+   */
+
+  child: function() {
+    return this.__child || (this.__child = new RunLoop({ tick: this.tick, _id: this._id << 2 }));
+  },
+
+  /**
+   * Runs animatable object on requestAnimationFrame. This gets
+   * called whenever the UI state changes.
+   *
+   * @method animate
+   * @param {Object} animatable object. Must have `update()`
+   */
+
+  defer: function(listener, before) {
+
+    // if animating, don't continue
+    if (this._running) {
+      // return listener();
+    }
+
+    this._animationQueue.push(listener);
+    var self = this;
+
+    var ret = {
+      dispose: function() {
+        var i = self._animationQueue.indexOf(listener);
+        if (~i) {
+          self._animationQueue.splice(i, 1);
+        }
+      },
+      reDefer: function() {
+        var i = self._animationQueue.indexOf(listener);
+        if (~i) {
+          self._animationQueue.splice(i, 1);
+          self._animationQueue.push(listener);
+          return true;
+        }
+        return false;
+      }
+    }
+
+    if (this._requestingFrame) {
+      return ret;
+    }
+
+    this._requestingFrame = true;
+    var self = this;
+
+    // run the animation frame, and callback all the animatable objects
+    this.tick(function() {
+      self.runNow();
+      self._requestingFrame = false;
+    });
+
+    return ret;
+  },
+
+  /**
+   */
+
+  runNow: function() {
+    var queue = this._animationQueue;
+    this._animationQueue = [];
+    this._running = true;
+
+    // queue.length is important here, because animate() can be
+    // called again immediately after an update
+    for (var i = 0; i < queue.length; i++) {
+      var item = queue[i];
+      item();
+
+      // check for anymore animations - need to run
+      // them in order
+      if (this._animationQueue.length) {
+        this.runNow();
+      }
+    }
+
+
+    this.emit("drained");
+    this._running = false;
+  }
+});
+
+RunLoop.instance = new RunLoop({});
+
+module.exports = RunLoop;
+
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"_process":17,"fast-event-emitter":18,"protoclass":19}],24:[function(require,module,exports){
 module.exports = extend
 
 function extend(target) {
