@@ -1,6 +1,7 @@
 // TODO - move jsdom stuff to test helpers
 var jsdom  = require("jsdom");
 var expect = require("expect.js");
+var runloop    = require("watchable-object/lib/runloop").instance;
 
 // JSDOM must be set to global before react is required() (CC)
 global.document = jsdom.jsdom({
@@ -51,8 +52,10 @@ describe(__filename + "#", function() {
     React.render(React.createElement(Component, { am: am, bm: bm }), div);
     expect(div.textContent).to.be("Jeffg");
     am.set("fn", "Oprah");
+    runloop.runNow();
     expect(div.textContent).to.be("Oprahg");
     bm.set("ln", "w");
+    runloop.runNow();
     expect(div.textContent).to.be("Oprahw");
   });
 
@@ -77,8 +80,10 @@ describe(__filename + "#", function() {
     React.render(React.createElement(Component), div);
     expect(div.textContent).to.be("Jeffg");
     am.set("fn", "Oprah");
+    runloop.runNow();
     expect(div.textContent).to.be("Oprahg");
     bm.set("ln", "w");
+    runloop.runNow();
     expect(div.textContent).to.be("Oprahw");
   });
 
@@ -102,6 +107,7 @@ describe(__filename + "#", function() {
     React.render(React.createElement(Component, { model: model }), div);
     expect(div.textContent).to.be("abba");
     model.set("name", "baab");
+    runloop.runNow();
     expect(div.textContent).to.be("baab");
   });
 
@@ -127,8 +133,10 @@ describe(__filename + "#", function() {
     React.render(React.createElement(Component, { model: model }), div);
     expect(div.textContent).to.be("abba");
     model.set("name", "baab");
+    runloop.runNow();
     expect(div.textContent).to.be("baab");
     model.set("show", false);
+    runloop.runNow();
     expect(div.textContent).to.be("hidden");
     model.set("name", "aaaa");
   });
@@ -159,8 +167,10 @@ describe(__filename + "#", function() {
     expect(div.textContent).to.be("abba");
     component.setState({ model: new caplet.Model({name:"baab"}) });
     model.set("name", "baab");
+    runloop.runNow();
     expect(div.textContent).to.be("baab");
     model.set("name", "aaaa");
+    runloop.runNow();
     expect(div.textContent).to.be("baab");
   });
 });

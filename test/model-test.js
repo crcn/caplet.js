@@ -1,5 +1,6 @@
 var Model = require("../lib/model");
 var expect = require("expect.js");
+var runloop    = require("watchable-object/lib/runloop").instance;
 
 describe(__filename + "#", function() {
 
@@ -189,6 +190,7 @@ describe(__filename + "#", function() {
 
     var m = new ChildModel();
     m.setProperties({ firstName: "a", lastName: "b" });
+    runloop.runNow();
     expect(m.fullName).to.be("a b");
   });
 
@@ -205,6 +207,7 @@ describe(__filename + "#", function() {
 
     var c = new ChildModel({ a: 1,  data: "1" });
     c.set("b", 2);
+    runloop.runNow();
     expect(i).to.be(1);
   });
 

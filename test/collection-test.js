@@ -1,6 +1,7 @@
 var Collection = require("../lib/collection");
 var watchProperty = require("../lib/watch-property");
 var expect     = require("expect.js");
+var runloop    = require("watchable-object/lib/runloop").instance;
 
 describe(__filename + "#", function() {
 
@@ -77,7 +78,8 @@ describe(__filename + "#", function() {
     var w = c.watch(function() { i++; });
     c.at(0).set("data", 4);
     c.at(0).set("data", 5);
-    expect(i).to.be(2);
+    runloop.runNow();
+    expect(i).to.be(1);
   });
 
   it("can call toData()", function() {
@@ -105,6 +107,7 @@ describe(__filename + "#", function() {
     var m = c.at(0);
     expect(i).to.be(0);
     c.splice(0, 1);
+    runloop.runNow();
     expect(i).to.be(1);
     m.set("data", 4);
     expect(i).to.be(1);
@@ -115,6 +118,7 @@ describe(__filename + "#", function() {
     var ChildCollection = Collection.extend({ onChange: function() { i++; }});
     var c = new ChildCollection();
     c.push(c.createModel(1));
+    runloop.runNow();
     expect(i).to.be(1);
   });
 
@@ -142,6 +146,7 @@ describe(__filename + "#", function() {
 
     var c = new ChildCollection({ a: 1,  data: [] });
     c.set("b", 4);
+    runloop.runNow();
     expect(i).to.be(1);
   });
 
@@ -169,6 +174,7 @@ describe(__filename + "#", function() {
     });
 
     c.at(0).set("data", 10);
+    runloop.runNow();
     expect(sum).to.be(15);
   });
 
@@ -179,6 +185,7 @@ describe(__filename + "#", function() {
       i++;
     });
     m.dispose();
+    runloop.runNow();
     expect(i).to.be(1);
   });
 

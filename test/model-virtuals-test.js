@@ -1,6 +1,7 @@
 var Model = require("../lib/model");
 var Caplet = require("../lib");
 var expect = require("expect.js");
+var runloop    = require("watchable-object/lib/runloop").instance;
 
 describe(__filename + "#", function() {
 
@@ -58,6 +59,7 @@ describe(__filename + "#", function() {
     var i = 0;
     c.watch(function() { i++; });
     c.get("a");
+    runloop.runNow();
     expect(i).to.be(1);
   });
 

@@ -1,6 +1,7 @@
 var Model = require("../lib/model");
 var Caplet = require("../lib");
 var expect = require("expect.js");
+var runloop    = require("watchable-object/lib/runloop").instance;
 
 describe(__filename + "#", function() {
 
@@ -9,6 +10,7 @@ describe(__filename + "#", function() {
     var bm = new Caplet.Model();
     Caplet.bindProperty(am, "a", bm, "b");
     am.set("a", 2);
+    runloop.runNow();
     expect(bm.b).to.be(2);
   });
 
@@ -17,6 +19,7 @@ describe(__filename + "#", function() {
     var bm = new Caplet.Model();
     Caplet.bindProperty(am, "a", bm);
     am.set("a", 2);
+    runloop.runNow();
     expect(bm.a).to.be(2);
   });
 
@@ -24,6 +27,7 @@ describe(__filename + "#", function() {
     var am = new Caplet.Model({a:1});
     var bm = new Caplet.Model();
     Caplet.bindProperty(am, "a", bm).trigger();
+    runloop.runNow();
     expect(bm.a).to.be(1);
   });
 
@@ -34,6 +38,7 @@ describe(__filename + "#", function() {
     expect(bm.a).to.be(1);
     binding.dispose();
     am.set("a", 2);
+    runloop.runNow();
     expect(bm.a).to.be(1);
   });
 
@@ -43,6 +48,7 @@ describe(__filename + "#", function() {
     expect(am.b).to.be(1);
     binding.dispose();
     am.set("a", 2);
+    runloop.runNow();
     expect(am.b).to.be(1);
   });
 });

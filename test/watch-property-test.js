@@ -2,6 +2,8 @@ var Model = require("../lib/model");
 var Caplet = require("../lib");
 var expect = require("expect.js");
 
+var runloop    = require("watchable-object/lib/runloop").instance;
+
 describe(__filename + "#", function() {
 
   it("watchProperty callback context is mdoel", function() {
@@ -10,6 +12,7 @@ describe(__filename + "#", function() {
       expect(this).to.be(model);
     });
     model.set("a", 1);
+    runloop.runNow();
   });
 
   it("triggers a listener if watched value triggers a change", function() {
@@ -21,6 +24,7 @@ describe(__filename + "#", function() {
 
     a.b.set("c", 1);
     a.b.set("d", 1);
-    expect(i).to.be(3);
+    runloop.runNow();
+    expect(i).to.be(2);
   });
 });

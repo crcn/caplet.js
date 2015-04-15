@@ -1,6 +1,7 @@
 var Thread  = require("./thread");
 var caplet  = require("../../..");
 var expect  = require("expect.js");
+var runloop    = require("watchable-object/lib/runloop").instance;
 
 describe(__filename + "#", function() {
 
@@ -43,6 +44,7 @@ describe(__filename + "#", function() {
     var m = Thread({ uid: "thread1" });
     caplet.getAsync(m, "participants", function() {
       m.addMessage({ text: "hello", uid: "userId" }, function() {
+        runloop.runNow();
         expect(m.participants.length).to.be(1);
         expect(m.messages.length).to.be(1);
         next();
@@ -53,6 +55,7 @@ describe(__filename + "#", function() {
   it("updates the unreadMessageCount when a new message is added", function(next) {
     var m = Thread({ uid: "thread1" });
     m.addMessage({ text: "hello" }, function() {
+      runloop.runNow();
       expect(m.unreadMessageCount).to.be(1);
       next();
     });
@@ -62,6 +65,7 @@ describe(__filename + "#", function() {
 
     var m = Thread({ uid: "thread1" });
     m.addMessage({ text: "hello", read: true }, function() {
+      runloop.runNow();
       expect(m.unreadMessageCount).to.be(0);
       next();
     });
@@ -70,8 +74,10 @@ describe(__filename + "#", function() {
   it("can mark a new message as read & update the unreadMessageCount", function(next) {
     var m = Thread({ uid: "thread1" });
     m.addMessage({ text: "hello" }, function(err, message) {
+      runloop.runNow();
       expect(m.unreadMessageCount).to.be(1);
       message.set("read", true);
+      runloop.runNow();
       expect(m.unreadMessageCount).to.be(0);
       next();
     });

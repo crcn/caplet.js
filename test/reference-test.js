@@ -1,6 +1,7 @@
 var Model = require("../lib/model");
 var Caplet = require("../lib");
 var expect = require("expect.js");
+var runloop    = require("watchable-object/lib/runloop").instance;
 
 describe(__filename + "#", function() {
 
@@ -14,6 +15,7 @@ describe(__filename + "#", function() {
     var m = new Model({ name: "abba" });
     var ref = Caplet.reference(m, "name");
     m.set("name", "baab");
+    runloop.runNow();
     expect(ref.value).to.be("baab");
   });
 
@@ -21,6 +23,7 @@ describe(__filename + "#", function() {
     var m = new Model({ name: "abba" });
     var ref = Caplet.reference(m, "name");
     ref.set("value", "baab");
+    runloop.runNow();
     expect(m.name).to.be("abba");
   });
 });
