@@ -1,6 +1,6 @@
 {
   "name": "caplet",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Models library for JavaScript",
   "main": "./lib/index.js",
   "keywords": [
@@ -62,8 +62,8 @@
     "yargs": "^3.5.4"
   },
   "dependencies": {
-    "watchable-collection": "^2.0.x",
-    "watchable-object": "^2.0.x",
+    "watchable-collection": "^3.0.x",
+    "watchable-object": "^3.0.x",
     "xtend": "^4.0.0"
   }
 }
