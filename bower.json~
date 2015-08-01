@@ -1,6 +1,6 @@
 {
   "name": "caplet",
-  "version": "2.0.0",
+  "version": "0.0.13",
   "homepage": "https://github.com/mojo-js/caplet.js",
   "authors": [
     "Craig Condon <craig.j.condon@gmail.com>"
